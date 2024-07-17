@@ -21,7 +21,6 @@ import { useState } from "react";
   }*/
 
 export default function Main() {
-  const [showTooltip, setShowTooltip] = useState(true);
   let arrayServicios = [{ id: "otros", label: "Menos de 3 viajes", value: 0 }];
   const indexOtros = arrayServicios.findIndex((obj) => (obj.id = "otros"));
   const lineasUsadas = Uno.Data.EntityList.map((linea) => {
@@ -56,6 +55,7 @@ export default function Main() {
       label: tipoMovimiento,
       value: contador,
     });
+    arrayTiposBarChart.push(contador)
     return (
       <p>
         {tipoMovimiento} : {contador}
@@ -80,7 +80,14 @@ export default function Main() {
         
         data: arrayBalances
       }]}
-      width={1000}
+      width={500}
+      height={300}
+      />
+
+      <BarChart
+      xAxis={[{scaleType:'band',data:Uno.Data.MovementTypeList}]}
+      series={[{data:arrayTiposBarChart}]}
+      width={500}
       height={300}
       />
         
@@ -93,7 +100,7 @@ export default function Main() {
             innerRadius: 30,
           },
         ]}
-        width={800}
+        width={500}
         height={200}
       />
       <PieChart
@@ -112,7 +119,7 @@ export default function Main() {
             innerRadius: 30,
           },
         ]}
-        width={1000}
+        width={500}
         height={300}
       />
 
