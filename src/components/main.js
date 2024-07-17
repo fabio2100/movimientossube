@@ -71,24 +71,29 @@ export default function Main() {
   });
   arrayBalances = arrayBalances.reverse();
   arrayFechas = arrayFechas.reverse();
+
+  var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const valueFormatter = (fecha) => fecha.toLocaleString("en-US",options)
   return (
     <>
       <LineChart 
        grid={{ vertical: true, horizontal: true }}
-       xAxis={[{ data: arrayFechas }]}
+       xAxis={[{ data: arrayFechas,valueFormatter }]}
       series={[{
         
         data: arrayBalances
       }]}
-      width={500}
+      width={1500}
       height={300}
       />
 
       <BarChart
-      xAxis={[{scaleType:'band',data:Uno.Data.MovementTypeList}]}
+      yAxis={[{scaleType:'band',data:Uno.Data.MovementTypeList}]}
       series={[{data:arrayTiposBarChart}]}
       width={500}
       height={300}
+      layout="horizontal"
+    
       />
         
       <PieChart
@@ -98,6 +103,7 @@ export default function Main() {
             highlightScope: { faded: "global", highlighted: "item" },
             faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
             innerRadius: 30,
+          
           },
         ]}
         width={500}
