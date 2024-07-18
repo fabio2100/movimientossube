@@ -1,5 +1,5 @@
 import { BarChart, LineChart, PieChart, SparkLineChart } from "@mui/x-charts";
-import Uno from "../movimientos/tres.json";
+import Uno from "../movimientos/180724.json";
 import { Box, Stack } from "@mui/material";
 import { useState } from "react";
 //Estructura
