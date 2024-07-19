@@ -1,5 +1,5 @@
 import { BarChart, LineChart, PieChart, SparkLineChart } from "@mui/x-charts";
-import Uno from "../movimientos/180724.json";
+import Uno from "../movimientos/190724.json";
 import { Box, Stack } from "@mui/material";
 import { useState } from "react";
 //Estructura
@@ -45,7 +45,8 @@ export default function Main() {
 
   let arrayTipos = [];
   let arrayTiposBarChart = [];
-  const tipoDeMovimiento = Uno.Data.MovementTypeList.map((tipoMovimiento) => {
+
+  const tipoDeMovimiento = Uno.Data.MovementTypeList.map((tipoMovimiento,index) => {
     let contador = 0;
     Uno.Data.Items.forEach((movimiento) => {
       tipoMovimiento == movimiento.Type && contador++;
@@ -72,15 +73,14 @@ export default function Main() {
   arrayBalances = arrayBalances.reverse();
   arrayFechas = arrayFechas.reverse();
 
-  var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  const valueFormatter = (fecha) => fecha.toLocaleString("en-US",options)
+  var options = { month: 'short', day: 'numeric' ,hour:'numeric',minute:'numeric',seconds:'numeric'};
+  const valueFormatter = (fecha) => fecha.toLocaleString("es-ES",options)
   return (
     <>
       <LineChart 
        grid={{ vertical: true, horizontal: true }}
        xAxis={[{ data: arrayFechas,valueFormatter }]}
       series={[{
-        
         data: arrayBalances
       }]}
       width={1500}
