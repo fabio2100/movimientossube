@@ -1,5 +1,5 @@
 import { BarChart, LineChart, PieChart, SparkLineChart } from "@mui/x-charts";
-import Uno from "../movimientos/190724.json";
+import Uno from "../movimientos/250724.json";
 import { Box, Stack } from "@mui/material";
 import { useState } from "react";
 //Estructura
@@ -77,6 +77,7 @@ export default function Main() {
   const valueFormatter = (fecha) => fecha.toLocaleString("es-ES",options)
   return (
     <>
+    <div className="lineChart">
       <LineChart 
        grid={{ vertical: true, horizontal: true }}
        xAxis={[{ data: arrayFechas,valueFormatter }]}
@@ -86,7 +87,7 @@ export default function Main() {
       width={1500}
       height={300}
       />
-
+</div>
       <BarChart
       yAxis={[{scaleType:'band',data:Uno.Data.MovementTypeList}]}
       series={[{data:arrayTiposBarChart}]}
