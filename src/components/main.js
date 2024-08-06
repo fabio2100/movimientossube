@@ -33,10 +33,11 @@ export default function Main() {
       const fecha = new Date(item.Date);
       console.log(fecha.getMonth())
       if(fecha.getMonth() == mes){
-        arrayProvisorio.push({item})
+        arrayProvisorio.push(item)
       }
     })
-    setArrayDataMes(arrayProvisorio)
+    console.log({arrayProvisorio})
+    //setArrayDataMes(arrayProvisorio)
   }
 
   
