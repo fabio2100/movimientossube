@@ -1,6 +1,6 @@
 import { BarChart, LineChart, PieChart, SparkLineChart } from "@mui/x-charts";
-import Uno from "../movimientos/250724.json";
-import { Box, Stack } from "@mui/material";
+import Uno from "../movimientos/060824.json";
+import { Box, FormControl, InputLabel, MenuItem, Select, Stack } from "@mui/material";
 import { useState } from "react";
 //Estructura
 /*{
@@ -21,21 +21,60 @@ import { useState } from "react";
   }*/
 
 export default function Main() {
-  let arrayServicios = [{ id: "otros", label: "Menos de 3 viajes", value: 0 }];
-  const indexOtros = arrayServicios.findIndex((obj) => (obj.id = "otros"));
+  const [mes,setMes] = useState('all');
+  const [arrayDataMes,setArrayDataMes] = useState([])
+
+  const handleChange = (event) => {
+    console.log(event.target.value)
+    setMes(event.target.value)
+    let arrayProvisorio = [];
+    console.log(mes)
+    Uno.Data.Items.forEach(item => {
+      const fecha = new Date(item.Date);
+      console.log(fecha.getMonth())
+      if(fecha.getMonth() == mes){
+        arrayProvisorio.push({item})
+      }
+    })
+    setArrayDataMes(arrayProvisorio)
+  }
+
+  
+
+  const inputSelect  = <FormControl sx={{ m: 1, minWidth: 200 }}>
+    <InputLabel id="demo-simple-select-label">Mes
+    </InputLabel>
+    <Select
+     labelId="demo-simple-select-label"
+     id="demo-simple-select"
+     value={mes}
+     label="Mes"
+     onChange={handleChange}
+    >
+      <MenuItem value={'all'}>Todos los datos</MenuItem>
+      <MenuItem value={1}>Enero</MenuItem>
+      <MenuItem value={2}>Febrero</MenuItem>
+      <MenuItem value={3}>Marzo</MenuItem>
+      <MenuItem value={4}>Abril</MenuItem>
+      <MenuItem value={5}>Mayo</MenuItem>
+      <MenuItem value={6}>junio</MenuItem>
+      <MenuItem value={7}>Julio</MenuItem>
+      <MenuItem value={8}>Agosto</MenuItem>
+      <MenuItem value={9}>Setiembre</MenuItem>
+      <MenuItem value={10}>Octubre</MenuItem>
+      <MenuItem value={11}>Noviembre</MenuItem>
+      <MenuItem value={12}>Diciembre</MenuItem>
+    </Select>
+  </FormControl>
+
+
+  let arrayServicios = [];
   const lineasUsadas = Uno.Data.EntityList.map((linea) => {
     let contador = 0;
     Uno.Data.Items.forEach((movimiento) => {
       movimiento.Entity == linea && contador++;
     });
-    if (contador <= 3) {
-      arrayServicios[indexOtros].value += contador;
-      arrayServicios[
-        indexOtros
-      ].label = `${arrayServicios[indexOtros].label} ${linea}`;
-    } else {
       arrayServicios.push({ id: linea, label: linea, value: contador });
-    }
     return (
       <p>
         {linea} Veces:{contador}
@@ -73,10 +112,15 @@ export default function Main() {
   arrayBalances = arrayBalances.reverse();
   arrayFechas = arrayFechas.reverse();
 
+
+
   var options = { month: 'short', day: 'numeric' ,hour:'numeric',minute:'numeric',seconds:'numeric'};
   const valueFormatter = (fecha) => fecha.toLocaleString("es-ES",options)
   return (
     <>
+    {inputSelect}
+    <h1>array data mes</h1>
+    {arrayDataMes}
     <div className="lineChart">
       <LineChart 
        grid={{ vertical: true, horizontal: true }}
@@ -98,19 +142,6 @@ export default function Main() {
       />
         
       <PieChart
-        series={[
-          {
-            data: arrayTipos,
-            highlightScope: { faded: "global", highlighted: "item" },
-            faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
-            innerRadius: 30,
-          
-          },
-        ]}
-        width={500}
-        height={200}
-      />
-      <PieChart
         slotProps={{
           legend: {
             direction: "row",
@@ -130,11 +161,6 @@ export default function Main() {
         height={300}
       />
 
-      <h3>Total de movimientos {Uno.Data.Count}</h3>
-      <h2>Segun medio utilizado</h2>
-      {lineasUsadas}
-      <h2>Tipos de movimientos</h2>
-      {tipoDeMovimiento}
     </>
   );
 }
