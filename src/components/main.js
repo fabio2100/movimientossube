@@ -23,6 +23,7 @@ import { useState } from "react";
 export default function Main() {
   const [mes,setMes] = useState('all');
   const [arrayDataMes,setArrayDataMes] = useState([])
+  const [arrayServiciosMes,setArrayServiciosMes] = useState([]);
 
   const handleChange = (event) => {
     console.log(event.target.value)
@@ -32,12 +33,26 @@ export default function Main() {
     Uno.Data.Items.forEach(item => {
       const fecha = new Date(item.Date);
       console.log(fecha.getMonth())
-      if(fecha.getMonth() == mes){
+      if(fecha.getMonth()+1 == mes){
         arrayProvisorio.push(item)
       }
     })
     console.log({arrayProvisorio})
     //setArrayDataMes(arrayProvisorio)
+    let arrayServicios = [];
+    const lineasUsadas = Uno.Data.EntityList.map((linea) => {
+      let contador = 0;
+      arrayProvisorio.forEach((movimiento) => {
+        movimiento.Entity == linea && contador++;
+      });
+        arrayServicios.push({ id: linea, label: linea, value: contador });
+        setArrayServiciosMes(arrayServicios)
+      return (
+        <p>
+          {linea} Veces:{contador}
+        </p>
+      );
+    });
   }
 
   
@@ -83,6 +98,7 @@ export default function Main() {
     );
   });
 
+
   let arrayTipos = [];
   let arrayTiposBarChart = [];
 
@@ -117,12 +133,32 @@ export default function Main() {
 
   var options = { month: 'short', day: 'numeric' ,hour:'numeric',minute:'numeric',seconds:'numeric'};
   const valueFormatter = (fecha) => fecha.toLocaleString("es-ES",options)
+  console.log({arrayServicios})
   return (
     <>
     {inputSelect}
     <h1>array data mes</h1>
     {arrayDataMes}
     <div className="lineChart">
+    <PieChart
+        slotProps={{
+          legend: {
+            direction: "row",
+            position: { vertical: "top", horizontal: "middle" },
+            padding: 0,
+          },
+        }}
+        series={[
+          {
+            data: arrayServiciosMes,
+            highlightScope: { faded: "global", highlighted: "item" },
+            faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
+            innerRadius: 30,
+          },
+        ]}
+        width={500}
+        height={300}
+      />
       <LineChart 
        grid={{ vertical: true, horizontal: true }}
        xAxis={[{ data: arrayFechas,valueFormatter }]}
