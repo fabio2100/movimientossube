@@ -1,7 +1,7 @@
 import { BarChart, LineChart, PieChart, SparkLineChart } from "@mui/x-charts";
-import Uno from "../movimientos/060824.json";
+import Uno from "../movimientos/080824.json";
 import { Box, FormControl, InputLabel, MenuItem, Select, Stack } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 //Estructura
 /*{
     Success: true,
@@ -28,32 +28,29 @@ export default function Main() {
   const handleChange = (event) => {
     console.log(event.target.value)
     setMes(event.target.value)
+    console.log({mes})
+  }
+
+  useEffect(()=>{
     let arrayProvisorio = [];
-    console.log(mes)
     Uno.Data.Items.forEach(item => {
       const fecha = new Date(item.Date);
-      console.log(fecha.getMonth())
-      if(fecha.getMonth()+1 == mes){
+      if(fecha.getMonth()+1 == mes || mes === 'all'){
         arrayProvisorio.push(item)
       }
     })
-    console.log({arrayProvisorio})
-    //setArrayDataMes(arrayProvisorio)
     let arrayServicios = [];
-    const lineasUsadas = Uno.Data.EntityList.map((linea) => {
+    Uno.Data.EntityList.forEach((linea) => {
       let contador = 0;
       arrayProvisorio.forEach((movimiento) => {
-        movimiento.Entity == linea && contador++;
+        if(movimiento.Entity == linea){
+          contador++;
+        }  
       });
         arrayServicios.push({ id: linea, label: linea, value: contador });
-        setArrayServiciosMes(arrayServicios)
-      return (
-        <p>
-          {linea} Veces:{contador}
-        </p>
-      );
-    });
-  }
+      });
+      setArrayServiciosMes(arrayServicios)  
+  },[mes])
 
   
 
