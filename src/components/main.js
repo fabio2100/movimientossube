@@ -1,6 +1,13 @@
 import { BarChart, LineChart, PieChart, SparkLineChart } from "@mui/x-charts";
-import Uno from "../movimientos/080824.json";
-import { Box, FormControl, InputLabel, MenuItem, Select, Stack } from "@mui/material";
+import Uno from "../movimientos/090824.json";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 //Estructura
 /*{
@@ -21,65 +28,68 @@ import { useEffect, useState } from "react";
   }*/
 
 export default function Main() {
-  const [mes,setMes] = useState('all');
-  const [arrayDataMes,setArrayDataMes] = useState([])
-  const [arrayServiciosMes,setArrayServiciosMes] = useState([]);
+  const [mes, setMes] = useState("all");
+  const [arrayDataMes, setArrayDataMes] = useState([]);
+  const [arrayServiciosMes, setArrayServiciosMes] = useState([]);
+  const [totalViajesMes, setTotalViajesMes] = useState(0);
 
   const handleChange = (event) => {
-    console.log(event.target.value)
-    setMes(event.target.value)
-    console.log({mes})
-  }
+    setMes(event.target.value);
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     let arrayProvisorio = [];
-    Uno.Data.Items.forEach(item => {
+    Uno.Data.Items.forEach((item) => {
       const fecha = new Date(item.Date);
-      if(fecha.getMonth()+1 == mes || mes === 'all'){
-        arrayProvisorio.push(item)
+      if (
+        (fecha.getMonth() + 1 == mes || mes === "all") &&
+        item.Type !== "Carga virtual"
+      ) {
+        arrayProvisorio.push(item);
       }
-    })
+    });
+    setTotalViajesMes(arrayProvisorio.length);
     let arrayServicios = [];
     Uno.Data.EntityList.forEach((linea) => {
       let contador = 0;
       arrayProvisorio.forEach((movimiento) => {
-        if(movimiento.Entity == linea){
+        if (movimiento.Entity == linea) {
           contador++;
-        }  
+        }
       });
+
+      contador > 0 &&
         arrayServicios.push({ id: linea, label: linea, value: contador });
-      });
-      setArrayServiciosMes(arrayServicios)  
-  },[mes])
+    });
+    setArrayServiciosMes(arrayServicios);
+  }, [mes]);
 
-  
-
-  const inputSelect  = <FormControl sx={{ m: 1, minWidth: 200 }}>
-    <InputLabel id="demo-simple-select-label">Mes
-    </InputLabel>
-    <Select
-     labelId="demo-simple-select-label"
-     id="demo-simple-select"
-     value={mes}
-     label="Mes"
-     onChange={handleChange}
-    >
-      <MenuItem value={'all'}>Todos los datos</MenuItem>
-      <MenuItem value={1}>Enero</MenuItem>
-      <MenuItem value={2}>Febrero</MenuItem>
-      <MenuItem value={3}>Marzo</MenuItem>
-      <MenuItem value={4}>Abril</MenuItem>
-      <MenuItem value={5}>Mayo</MenuItem>
-      <MenuItem value={6}>junio</MenuItem>
-      <MenuItem value={7}>Julio</MenuItem>
-      <MenuItem value={8}>Agosto</MenuItem>
-      <MenuItem value={9}>Setiembre</MenuItem>
-      <MenuItem value={10}>Octubre</MenuItem>
-      <MenuItem value={11}>Noviembre</MenuItem>
-      <MenuItem value={12}>Diciembre</MenuItem>
-    </Select>
-  </FormControl>
-
+  const inputSelect = (
+    <FormControl sx={{ m: 1, minWidth: 200 }}>
+      <InputLabel id="demo-simple-select-label">Mes</InputLabel>
+      <Select
+        labelId="demo-simple-select-label"
+        id="demo-simple-select"
+        value={mes}
+        label="Mes"
+        onChange={handleChange}
+      >
+        <MenuItem value={"all"}>Todos los datos</MenuItem>
+        <MenuItem value={1}>Enero</MenuItem>
+        <MenuItem value={2}>Febrero</MenuItem>
+        <MenuItem value={3}>Marzo</MenuItem>
+        <MenuItem value={4}>Abril</MenuItem>
+        <MenuItem value={5}>Mayo</MenuItem>
+        <MenuItem value={6}>junio</MenuItem>
+        <MenuItem value={7}>Julio</MenuItem>
+        <MenuItem value={8}>Agosto</MenuItem>
+        <MenuItem value={9}>Setiembre</MenuItem>
+        <MenuItem value={10}>Octubre</MenuItem>
+        <MenuItem value={11}>Noviembre</MenuItem>
+        <MenuItem value={12}>Diciembre</MenuItem>
+      </Select>
+    </FormControl>
+  );
 
   let arrayServicios = [];
   const lineasUsadas = Uno.Data.EntityList.map((linea) => {
@@ -87,7 +97,7 @@ export default function Main() {
     Uno.Data.Items.forEach((movimiento) => {
       movimiento.Entity == linea && contador++;
     });
-      arrayServicios.push({ id: linea, label: linea, value: contador });
+    arrayServicios.push({ id: linea, label: linea, value: contador });
     return (
       <p>
         {linea} Veces:{contador}
@@ -95,53 +105,58 @@ export default function Main() {
     );
   });
 
-
   let arrayTipos = [];
   let arrayTiposBarChart = [];
 
-  const tipoDeMovimiento = Uno.Data.MovementTypeList.map((tipoMovimiento,index) => {
-    let contador = 0;
-    Uno.Data.Items.forEach((movimiento) => {
-      tipoMovimiento == movimiento.Type && contador++;
-    });
-    arrayTipos.push({
-      id: tipoMovimiento,
-      label: tipoMovimiento,
-      value: contador,
-    });
-    arrayTiposBarChart.push(contador)
-    return (
-      <p>
-        {tipoMovimiento} : {contador}
-      </p>
-    );
-  });
+  const tipoDeMovimiento = Uno.Data.MovementTypeList.map(
+    (tipoMovimiento, index) => {
+      let contador = 0;
+      Uno.Data.Items.forEach((movimiento) => {
+        tipoMovimiento == movimiento.Type && contador++;
+      });
+      arrayTipos.push({
+        id: tipoMovimiento,
+        label: tipoMovimiento,
+        value: contador,
+      });
+      arrayTiposBarChart.push(contador);
+      return (
+        <p>
+          {tipoMovimiento} : {contador}
+        </p>
+      );
+    }
+  );
 
   let arrayBalances = [];
   let arrayFechas = [];
   Uno.Data.Items.forEach((item) => {
     arrayBalances.push(item.ValueFormat.slice(2).replace(",", "."));
-    arrayFechas.push(new Date(item.Date))
+    arrayFechas.push(new Date(item.Date));
   });
   arrayBalances = arrayBalances.reverse();
   arrayFechas = arrayFechas.reverse();
 
-
-
-  var options = { month: 'short', day: 'numeric' ,hour:'numeric',minute:'numeric',seconds:'numeric'};
-  const valueFormatter = (fecha) => fecha.toLocaleString("es-ES",options)
-  console.log({arrayServicios})
+  var options = {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    seconds: "numeric",
+  };
+  const valueFormatter = (fecha) => fecha.toLocaleString("es-ES", options);
+  console.log({ arrayServicios });
   return (
     <>
-    {inputSelect}
-    <h1>array data mes</h1>
-    {arrayDataMes}
-    <div className="lineChart">
-    <PieChart
+      {inputSelect}
+      <h1>array data mes</h1>
+      {arrayDataMes}
+      <h1>Viajes totales mes: {totalViajesMes}</h1>
+      <PieChart
         slotProps={{
           legend: {
             direction: "row",
-            position: { vertical: "top", horizontal: "middle" },
+            position: { vertical: "bottom", horizontal: "right" },
             padding: 0,
           },
         }}
@@ -156,25 +171,27 @@ export default function Main() {
         width={500}
         height={300}
       />
-      <LineChart 
-       grid={{ vertical: true, horizontal: true }}
-       xAxis={[{ data: arrayFechas,valueFormatter }]}
-      series={[{
-        data: arrayBalances
-      }]}
-      width={1500}
-      height={300}
-      />
-</div>
+      <div className="lineChart">
+        <LineChart
+          grid={{ vertical: true, horizontal: true }}
+          xAxis={[{ data: arrayFechas, valueFormatter }]}
+          series={[
+            {
+              data: arrayBalances,
+            },
+          ]}
+          width={1500}
+          height={300}
+        />
+      </div>
       <BarChart
-      yAxis={[{scaleType:'band',data:Uno.Data.MovementTypeList}]}
-      series={[{data:arrayTiposBarChart}]}
-      width={500}
-      height={300}
-      layout="horizontal"
-    
+        yAxis={[{ scaleType: "band", data: Uno.Data.MovementTypeList }]}
+        series={[{ data: arrayTiposBarChart }]}
+        width={500}
+        height={300}
+        layout="horizontal"
       />
-        
+
       <PieChart
         slotProps={{
           legend: {
@@ -194,7 +211,6 @@ export default function Main() {
         width={500}
         height={300}
       />
-
     </>
   );
 }
