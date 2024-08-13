@@ -1,5 +1,5 @@
 import { BarChart, LineChart, PieChart, SparkLineChart } from "@mui/x-charts";
-import Uno from "../movimientos/090824.json";
+import Uno from "../movimientos/130824.json";
 import {
   Box,
   FormControl,
@@ -32,6 +32,12 @@ export default function Main() {
   const [arrayDataMes, setArrayDataMes] = useState([]);
   const [arrayServiciosMes, setArrayServiciosMes] = useState([]);
   const [totalViajesMes, setTotalViajesMes] = useState(0);
+  const [cargaMes, setCargaMes] = useState(0);
+  const [dineroCargado,setDineroCargado] = useState(0);
+  const [saldoConsumido, setSaldoConsumido] = useState(0);
+  const [avgViaje,setAvgViaje] = useState(0);
+  const [ejeY, setEjeY] = useState(false);
+  const [ejeX, setEjeX] = useState(false);
 
   const handleChange = (event) => {
     setMes(event.target.value);
@@ -39,6 +45,9 @@ export default function Main() {
 
   useEffect(() => {
     let arrayProvisorio = [];
+    setCargaMes(0)
+    setDineroCargado(0)
+    setSaldoConsumido(0)
     Uno.Data.Items.forEach((item) => {
       const fecha = new Date(item.Date);
       if (
@@ -46,10 +55,18 @@ export default function Main() {
         item.Type !== "Carga virtual"
       ) {
         arrayProvisorio.push(item);
+        setSaldoConsumido(prev => prev + Number(item.BalanceFormat.slice(2).replace(",", ".")))
+      }else{
+        if((fecha.getMonth() + 1 == mes || mes === "all") && item.Type === "Carga virtual"){
+          setCargaMes(prev => prev + 1);
+          setDineroCargado(prev=> prev + Number(item.BalanceFormat.slice(2).replace(",", ".")))
+        }
       }
     });
     setTotalViajesMes(arrayProvisorio.length);
+    setAvgViaje(saldoConsumido/totalViajesMes)
     let arrayServicios = [];
+    let arrayTipos = [];
     Uno.Data.EntityList.forEach((linea) => {
       let contador = 0;
       arrayProvisorio.forEach((movimiento) => {
@@ -62,6 +79,14 @@ export default function Main() {
         arrayServicios.push({ id: linea, label: linea, value: contador });
     });
     setArrayServiciosMes(arrayServicios);
+    let arrayTipoMes = [];
+    Uno.Data.MovementTypeList.forEach((tipo) => {
+      arrayTipoMes.push(tipo);
+      arrayProvisorio.forEach((viajeMes) => {
+        if (viajeMes.Type === tipo) {
+        }
+      });
+    });
   }, [mes]);
 
   const inputSelect = (
@@ -145,13 +170,16 @@ export default function Main() {
     seconds: "numeric",
   };
   const valueFormatter = (fecha) => fecha.toLocaleString("es-ES", options);
-  console.log({ arrayServicios });
   return (
     <>
       {inputSelect}
       <h1>array data mes</h1>
       {arrayDataMes}
       <h1>Viajes totales mes: {totalViajesMes}</h1>
+      <h1>Cargas totales mes: {cargaMes}</h1>
+      <h1>Saldo Cargado: {dineroCargado}</h1>
+      <h1>Saldo Consumido: {saldoConsumido}</h1>
+      <h1>Promedio por viaje: {avgViaje}</h1>
       <PieChart
         slotProps={{
           legend: {
@@ -171,6 +199,15 @@ export default function Main() {
         width={500}
         height={300}
       />
+      {ejeY && (
+        <BarChart
+          yAxis={[{ scaleType: "band", data: Uno.Data.MovementTypeList }]}
+          series={[{ data: ejeX }]}
+          width={500}
+          height={300}
+          layout="horizontal"
+        />
+      )}
       <div className="lineChart">
         <LineChart
           grid={{ vertical: true, horizontal: true }}
