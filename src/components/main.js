@@ -1,5 +1,5 @@
 import { BarChart, LineChart, PieChart, SparkLineChart } from "@mui/x-charts";
-import Uno from "../movimientos/130824.json";
+import Uno from "../movimientos/total082024.json";
 import {
   Box,
   FormControl,
@@ -38,6 +38,8 @@ export default function Main() {
   const [avgViaje,setAvgViaje] = useState(0);
   const [ejeY, setEjeY] = useState(false);
   const [ejeX, setEjeX] = useState(false);
+  const [dataPreciosUsados,setDataPreciosUsados] = useState([]);
+  const [cantidadPreciosUsados,setCantidadPreciosUsados] = useState([])
 
   const handleChange = (event) => {
     setMes(event.target.value);
@@ -66,7 +68,7 @@ export default function Main() {
     setTotalViajesMes(arrayProvisorio.length);
     setAvgViaje(saldoConsumido/totalViajesMes)
     let arrayServicios = [];
-    let arrayTipos = [];
+    console.log({arrayProvisorio})
     Uno.Data.EntityList.forEach((linea) => {
       let contador = 0;
       arrayProvisorio.forEach((movimiento) => {
@@ -87,6 +89,19 @@ export default function Main() {
         }
       });
     });
+
+    let arrayPreciosUsados = [];
+    let arrayCantidadPreciosUsados = [];
+    arrayProvisorio.forEach(element => {
+      if(arrayPreciosUsados.indexOf(element.BalanceFormat)==-1){
+        arrayPreciosUsados.push(element.BalanceFormat)
+        arrayCantidadPreciosUsados.push(1)
+      }else{
+        arrayCantidadPreciosUsados[arrayPreciosUsados.indexOf(element.BalanceFormat)] = arrayCantidadPreciosUsados[arrayPreciosUsados.indexOf(element.BalanceFormat)]+1;
+      }
+    })
+    setDataPreciosUsados(arrayPreciosUsados)
+    setCantidadPreciosUsados(arrayCantidadPreciosUsados)
   }, [mes]);
 
   const inputSelect = (
@@ -115,6 +130,7 @@ export default function Main() {
       </Select>
     </FormControl>
   );
+
 
   let arrayServicios = [];
   const lineasUsadas = Uno.Data.EntityList.map((linea) => {
@@ -180,6 +196,15 @@ export default function Main() {
       <h1>Saldo Cargado: {dineroCargado}</h1>
       <h1>Saldo Consumido: {saldoConsumido}</h1>
       <h1>Promedio por viaje: {avgViaje}</h1>
+    
+      <BarChart
+  yAxis={[{ scaleType: "band", data: dataPreciosUsados }]}
+  series={[{ data: cantidadPreciosUsados }]}
+  width={500}
+  height={300}
+  layout="horizontal"
+/>
+
       <PieChart
         slotProps={{
           legend: {
