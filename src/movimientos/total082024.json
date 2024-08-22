@@ -8,6 +8,72 @@
       "PageCount": 0,
       "Items": [
         {
+          "Date": "2024-08-22T08:35:37",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 761",
+          "Place": "Interno 194",
+          "BalanceFormat": "$ -325,00",
+          "ValueFormat": "$ 1414,56",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-08-21T08:56:15",
+          "Id": "0",
+          "Type": "Uso con RED SUBE 1",
+          "Entity": "LINEA 951",
+          "Place": "Interno 80",
+          "BalanceFormat": "$ 0,00",
+          "ValueFormat": "$ 1739,56",
+          "IsNegative": false,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-08-21T08:48:05",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 700",
+          "Place": "Interno 131",
+          "BalanceFormat": "$ -325,00",
+          "ValueFormat": "$ 1739,56",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-08-20T19:56:16",
+          "Id": "0",
+          "Type": "Uso con RED SUBE 1",
+          "Entity": "LINEA 950",
+          "Place": "Interno 116",
+          "BalanceFormat": "$ 0,00",
+          "ValueFormat": "$ 2064,56",
+          "IsNegative": false,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-08-20T19:40:53",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 733",
+          "Place": "Interno 66",
+          "BalanceFormat": "$ -325,00",
+          "ValueFormat": "$ 2064,56",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-08-20T18:10:35",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 943",
+          "Place": "Interno 25",
+          "BalanceFormat": "$ -325,00",
+          "ValueFormat": "$ 2389,56",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
           "Date": "2024-08-20T08:41:54",
           "Id": "0",
           "Type": "Uso",

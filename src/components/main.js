@@ -33,13 +33,17 @@ export default function Main() {
   const [arrayServiciosMes, setArrayServiciosMes] = useState([]);
   const [totalViajesMes, setTotalViajesMes] = useState(0);
   const [cargaMes, setCargaMes] = useState(0);
-  const [dineroCargado,setDineroCargado] = useState(0);
+  const [dineroCargado, setDineroCargado] = useState(0);
   const [saldoConsumido, setSaldoConsumido] = useState(0);
-  const [avgViaje,setAvgViaje] = useState(0);
+  const [avgViaje, setAvgViaje] = useState(0);
   const [ejeY, setEjeY] = useState(false);
   const [ejeX, setEjeX] = useState(false);
-  const [dataPreciosUsados,setDataPreciosUsados] = useState([]);
-  const [cantidadPreciosUsados,setCantidadPreciosUsados] = useState([])
+  const [dataPreciosUsados, setDataPreciosUsados] = useState([]);
+  const [cantidadPreciosUsados, setCantidadPreciosUsados] = useState([]);
+  const [fechasMes, setFechasMes] = useState([]);
+  const [balancesMes, setBalancesMes] = useState([]);
+  const [longitudLineChart,setLongitudLineChart] = useState(0);
+
 
   const handleChange = (event) => {
     setMes(event.target.value);
@@ -47,28 +51,36 @@ export default function Main() {
 
   useEffect(() => {
     let arrayProvisorio = [];
-    setCargaMes(0)
-    setDineroCargado(0)
-    setSaldoConsumido(0)
+    let totalMovimientosMes = 0;
+    setCargaMes(0);
+    setDineroCargado(0);
+    setSaldoConsumido(0);
     Uno.Data.Items.forEach((item) => {
+      totalMovimientosMes++;
       const fecha = new Date(item.Date);
-      if (
-        (fecha.getMonth() + 1 == mes || mes === "all") &&
-        item.Type !== "Carga virtual"
-      ) {
-        arrayProvisorio.push(item);
-        setSaldoConsumido(prev => prev + Number(item.BalanceFormat.slice(2).replace(",", ".")))
-      }else{
-        if((fecha.getMonth() + 1 == mes || mes === "all") && item.Type === "Carga virtual"){
-          setCargaMes(prev => prev + 1);
-          setDineroCargado(prev=> prev + Number(item.BalanceFormat.slice(2).replace(",", ".")))
+      if (fecha.getMonth() + 1 == mes || mes === "all") {
+        if (item.Type !== "Carga virtual") {
+          arrayProvisorio.push(item);
+          setSaldoConsumido(
+            (prev) =>
+              prev + Number(item.BalanceFormat.slice(2).replace(",", "."))
+          );
+        }
+        if(item.Type === 'Carga virtual'){
+          setCargaMes((prev) => prev + 1);
+          setDineroCargado(
+            (prev) =>
+              prev + Number(item.BalanceFormat.slice(2).replace(",", "."))
+          );
         }
       }
     });
     setTotalViajesMes(arrayProvisorio.length);
-    setAvgViaje(saldoConsumido/totalViajesMes)
+    setAvgViaje(saldoConsumido / totalViajesMes);
+    setLongitudLineChart(totalViajesMes*10);
+    console.log(totalMovimientosMes)
+    console.log(longitudLineChart)
     let arrayServicios = [];
-    console.log({arrayProvisorio})
     Uno.Data.EntityList.forEach((linea) => {
       let contador = 0;
       arrayProvisorio.forEach((movimiento) => {
@@ -92,16 +104,32 @@ export default function Main() {
 
     let arrayPreciosUsados = [];
     let arrayCantidadPreciosUsados = [];
-    arrayProvisorio.forEach(element => {
-      if(arrayPreciosUsados.indexOf(element.BalanceFormat)==-1){
-        arrayPreciosUsados.push(element.BalanceFormat)
-        arrayCantidadPreciosUsados.push(1)
-      }else{
-        arrayCantidadPreciosUsados[arrayPreciosUsados.indexOf(element.BalanceFormat)] = arrayCantidadPreciosUsados[arrayPreciosUsados.indexOf(element.BalanceFormat)]+1;
+    arrayProvisorio.forEach((element) => {
+      if (arrayPreciosUsados.indexOf(element.BalanceFormat) == -1) {
+        arrayPreciosUsados.push(element.BalanceFormat);
+        arrayCantidadPreciosUsados.push(1);
+      } else {
+        arrayCantidadPreciosUsados[
+          arrayPreciosUsados.indexOf(element.BalanceFormat)
+        ] =
+          arrayCantidadPreciosUsados[
+            arrayPreciosUsados.indexOf(element.BalanceFormat)
+          ] + 1;
       }
-    })
-    setDataPreciosUsados(arrayPreciosUsados)
-    setCantidadPreciosUsados(arrayCantidadPreciosUsados)
+    });
+    setDataPreciosUsados(arrayPreciosUsados);
+    setCantidadPreciosUsados(arrayCantidadPreciosUsados);
+
+    let arrayBalances = [];
+    let arrayFechas = [];
+    arrayProvisorio.forEach((item) => {
+      arrayBalances.push(item.ValueFormat.slice(2).replace(",", "."));
+      arrayFechas.push(new Date(item.Date));
+    });
+    arrayBalances = arrayBalances.reverse();
+    arrayFechas = arrayFechas.reverse();
+    setFechasMes(arrayFechas);
+    setBalancesMes(arrayBalances);
   }, [mes]);
 
   const inputSelect = (
@@ -130,7 +158,6 @@ export default function Main() {
       </Select>
     </FormControl>
   );
-
 
   let arrayServicios = [];
   const lineasUsadas = Uno.Data.EntityList.map((linea) => {
@@ -177,6 +204,8 @@ export default function Main() {
   });
   arrayBalances = arrayBalances.reverse();
   arrayFechas = arrayFechas.reverse();
+  console.log({ arrayFechas });
+  console.log({ arrayBalances });
 
   var options = {
     month: "short",
@@ -196,15 +225,8 @@ export default function Main() {
       <h1>Saldo Cargado: {dineroCargado}</h1>
       <h1>Saldo Consumido: {saldoConsumido}</h1>
       <h1>Promedio por viaje: {avgViaje}</h1>
-    
-      <BarChart
-  yAxis={[{ scaleType: "band", data: dataPreciosUsados }]}
-  series={[{ data: cantidadPreciosUsados }]}
-  width={500}
-  height={300}
-  layout="horizontal"
-/>
 
+      <h2>Por sevicio utlizado</h2>
       <PieChart
         slotProps={{
           legend: {
@@ -224,55 +246,29 @@ export default function Main() {
         width={500}
         height={300}
       />
-      {ejeY && (
-        <BarChart
-          yAxis={[{ scaleType: "band", data: Uno.Data.MovementTypeList }]}
-          series={[{ data: ejeX }]}
-          width={500}
-          height={300}
-          layout="horizontal"
-        />
-      )}
-      <div className="lineChart">
-        <LineChart
-          grid={{ vertical: true, horizontal: true }}
-          xAxis={[{ data: arrayFechas, valueFormatter }]}
-          series={[
-            {
-              data: arrayBalances,
-            },
-          ]}
-          width={1500}
-          height={300}
-        />
-      </div>
+      <h2>Por precio del pasaje</h2>
       <BarChart
-        yAxis={[{ scaleType: "band", data: Uno.Data.MovementTypeList }]}
-        series={[{ data: arrayTiposBarChart }]}
+        yAxis={[{ scaleType: "band", data: dataPreciosUsados }]}
+        series={[{ data: cantidadPreciosUsados }]}
         width={500}
         height={300}
         layout="horizontal"
       />
 
-      <PieChart
-        slotProps={{
-          legend: {
-            direction: "row",
-            position: { vertical: "top", horizontal: "middle" },
-            padding: 0,
-          },
-        }}
-        series={[
-          {
-            data: arrayServicios,
-            highlightScope: { faded: "global", highlighted: "item" },
-            faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
-            innerRadius: 30,
-          },
-        ]}
-        width={500}
-        height={300}
-      />
+      <div className="lineChart">
+        <h2>Evolución del saldo</h2>
+        <LineChart
+          grid={{ vertical: true, horizontal: true }}
+          xAxis={[{ data: fechasMes, valueFormatter }]}
+          series={[
+            {
+              data: balancesMes,
+            },
+          ]}
+          width={longitudLineChart}
+          height={300}
+        />
+      </div>
     </>
   );
 }
