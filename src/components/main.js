@@ -43,6 +43,10 @@ export default function Main() {
   const [fechasMes, setFechasMes] = useState([]);
   const [balancesMes, setBalancesMes] = useState([]);
   const [longitudLineChart,setLongitudLineChart] = useState(0);
+  const [fechaMes2,setFechaMes2] = useState([]);
+  const [balancesMes2, setBalancesMes2] = useState([]);
+  const [longitudLineChart2,setLongitudLineChart2] = useState(0);
+  const [dataMes,setDataMes] = useState({});
 
 
   const handleChange = (event) => {
@@ -119,18 +123,23 @@ export default function Main() {
     });
     setDataPreciosUsados(arrayPreciosUsados);
     setCantidadPreciosUsados(arrayCantidadPreciosUsados);
-
+    setLongitudLineChart2(0)
     let arrayBalances = [];
     let arrayFechas = [];
     arrayProvisorio.forEach((item) => {
       arrayBalances.push(item.ValueFormat.slice(2).replace(",", "."));
       arrayFechas.push(new Date(item.Date));
+      setFechaMes2([...fechaMes2,item.Date])
+      setBalancesMes2([...balancesMes2,item.ValueFormat.slice(2).replace(",", ".")])
+      setLongitudLineChart2(prev => prev + 10)
     });
+    console.log({fechaMes2})
+    console.log({balancesMes2})
     arrayBalances = arrayBalances.reverse();
     arrayFechas = arrayFechas.reverse();
     setFechasMes(arrayFechas);
     setBalancesMes(arrayBalances);
-  }, [mes]);
+  },[mes]);
 
   const inputSelect = (
     <FormControl sx={{ m: 1, minWidth: 200 }}>
@@ -266,6 +275,21 @@ export default function Main() {
             },
           ]}
           width={longitudLineChart}
+          height={300}
+        />
+      </div>
+
+      <div className="lineChart">
+        <h2>Evolución del saldo</h2>
+        <LineChart
+          grid={{ vertical: true, horizontal: true }}
+          xAxis={[{ data: fechaMes2, valueFormatter }]}
+          series={[
+            {
+              data: balancesMes2,
+            },
+          ]}
+          width={longitudLineChart2}
           height={300}
         />
       </div>
