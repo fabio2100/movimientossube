@@ -47,6 +47,7 @@ export default function Main() {
   const [balancesMes2, setBalancesMes2] = useState([]);
   const [longitudLineChart2,setLongitudLineChart2] = useState(0);
   const [dataMes,setDataMes] = useState({});
+  const [mesProvisorio,setMesProvisorio] = useState([])
 
 
   const handleChange = (event) => {
@@ -79,6 +80,7 @@ export default function Main() {
         }
       }
     });
+    setMesProvisorio(arrayProvisorio)
     setTotalViajesMes(arrayProvisorio.length);
     setAvgViaje(saldoConsumido / totalViajesMes);
     setLongitudLineChart(totalViajesMes*10);
@@ -140,6 +142,12 @@ export default function Main() {
     setFechasMes(arrayFechas);
     setBalancesMes(arrayBalances);
   },[mes]);
+
+
+  useEffect(()=>{
+    console.log('este se debería ejecutar siempre que se actualice el array con los datos del mes');
+    console.log({mesProvisorio})
+  },[mesProvisorio])
 
   const inputSelect = (
     <FormControl sx={{ m: 1, minWidth: 200 }}>
