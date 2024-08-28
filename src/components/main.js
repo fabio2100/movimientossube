@@ -259,9 +259,9 @@ export default function Main() {
       <h1>Movimientos totales mes: {allMesData['nroMovimientos']}</h1>
       <h1>Servicios totales mes: {allMesData['nroServicios']}</h1>
       <h1>Cargas totales mes: {allMesData['nroCargas']}</h1>
-      <h1>Saldo Cargado: {dineroCargado}</h1>
-      <h1>Saldo Consumido: {saldoConsumido}</h1>
-      <h1>Promedio por viaje: {avgViaje}</h1>
+      <h1>Saldo Cargado: {allMesData['saldoCargado']}</h1>
+      <h1>Saldo Consumido: {allMesData['saldoConsumido']}</h1>
+      <h1>Promedio por viaje: {allMesData['avgViaje']}</h1>
       <h1>array data mes</h1>
       {arrayDataMes}
       <h1>Viajes totales mes: {totalViajesMes}</h1>
