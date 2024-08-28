@@ -47,7 +47,19 @@ export default function Main() {
   const [balancesMes2, setBalancesMes2] = useState([]);
   const [longitudLineChart2,setLongitudLineChart2] = useState(0);
   const [dataMes,setDataMes] = useState({});
-  const [mesProvisorio,setMesProvisorio] = useState([])
+  const [mesProvisorio,setMesProvisorio] = useState([]);
+  const [mesProvisorioTotales,setMesProvisorioTotales] = useState([]);
+  const [viajeTotales,setViajesTotales] = useState(0);
+  const [cargaMesTotales,setCargaMesTotales] = useState(0);
+  const [serviciosTotalesMes,setServiciosTotalesMes] = useState(0);
+  const [allMesData, setAllMesData] = useState({
+    nroMovimientos: 0,
+    nroServicios: 0,
+    nroCargas: 0,
+    saldoCargado: 0,
+    saldoConsumido: 0,
+    avgViaje: 0
+  })
 
 
   const handleChange = (event) => {
@@ -60,6 +72,11 @@ export default function Main() {
     setCargaMes(0);
     setDineroCargado(0);
     setSaldoConsumido(0);
+    setMesProvisorioTotales(Uno.Data.Items.filter((item)=>{
+      const fecha = new Date(item.Date);
+      return fecha.getMonth() + 1 == mes
+    }))
+
     Uno.Data.Items.forEach((item) => {
       totalMovimientosMes++;
       const fecha = new Date(item.Date);
@@ -84,8 +101,6 @@ export default function Main() {
     setTotalViajesMes(arrayProvisorio.length);
     setAvgViaje(saldoConsumido / totalViajesMes);
     setLongitudLineChart(totalViajesMes*10);
-    console.log(totalMovimientosMes)
-    console.log(longitudLineChart)
     let arrayServicios = [];
     Uno.Data.EntityList.forEach((linea) => {
       let contador = 0;
@@ -135,19 +150,25 @@ export default function Main() {
       setBalancesMes2([...balancesMes2,item.ValueFormat.slice(2).replace(",", ".")])
       setLongitudLineChart2(prev => prev + 10)
     });
-    console.log({fechaMes2})
-    console.log({balancesMes2})
     arrayBalances = arrayBalances.reverse();
     arrayFechas = arrayFechas.reverse();
     setFechasMes(arrayFechas);
     setBalancesMes(arrayBalances);
   },[mes]);
 
-
   useEffect(()=>{
-    console.log('este se debería ejecutar siempre que se actualice el array con los datos del mes');
-    console.log({mesProvisorio})
-  },[mesProvisorio])
+    const nroCargas = mesProvisorioTotales.filter(item => item.Type === 'Carga virtual').length;
+    const nroMovimientos =  mesProvisorioTotales.length;
+    const nroServicios = nroMovimientos - nroCargas;
+
+    setAllMesData({...allMesData,
+      nroMovimientos,
+      nroCargas,
+      nroServicios
+    })
+  },[mesProvisorioTotales])
+
+
 
   const inputSelect = (
     <FormControl sx={{ m: 1, minWidth: 200 }}>
@@ -221,8 +242,6 @@ export default function Main() {
   });
   arrayBalances = arrayBalances.reverse();
   arrayFechas = arrayFechas.reverse();
-  console.log({ arrayFechas });
-  console.log({ arrayBalances });
 
   var options = {
     month: "short",
@@ -235,6 +254,14 @@ export default function Main() {
   return (
     <>
       {inputSelect}
+      <h1>array USANDO ARRAY PROVISORIO</h1>
+      {arrayDataMes}
+      <h1>Movimientos totales mes: {allMesData['nroMovimientos']}</h1>
+      <h1>Servicios totales mes: {allMesData['nroServicios']}</h1>
+      <h1>Cargas totales mes: {allMesData['nroCargas']}</h1>
+      <h1>Saldo Cargado: {dineroCargado}</h1>
+      <h1>Saldo Consumido: {saldoConsumido}</h1>
+      <h1>Promedio por viaje: {avgViaje}</h1>
       <h1>array data mes</h1>
       {arrayDataMes}
       <h1>Viajes totales mes: {totalViajesMes}</h1>
