@@ -72,7 +72,7 @@ export default function Main() {
     setSaldoConsumido(0);
     setMesProvisorioTotales(Uno.Data.Items.filter((item)=>{
       const fecha = new Date(item.Date);
-      return fecha.getMonth() + 1 == mes
+      return fecha.getMonth() + 1 === mes || mes ==='all'
     }))
 
     Uno.Data.Items.forEach((item) => {
@@ -157,22 +157,27 @@ export default function Main() {
   useEffect(()=>{
 
     function saldoSumadora(prev,item){
-      return prev + Number(item.BalanceFormat.slice(2).replace(",", "."))
+      const value = item.Type !== 'Carga virtual' ? Math.abs(Number(item.BalanceFormat.slice(2).replace(",", "."))) : 0;
+      return  prev + value
     }
-
+    function saldoCargadora(prev,item){
+      const value = item.Type === 'Carga virtual' ? Math.abs(Number(item.BalanceFormat.slice(2).replace(",", "."))) : 0;
+      return  prev + value
+    }
     const nroCargas = mesProvisorioTotales.filter(item => item.Type === 'Carga virtual').length;
     const nroMovimientos =  mesProvisorioTotales.length;
     const nroServicios = nroMovimientos - nroCargas;
-    const saldoConsumido = mesProvisorio.reduce(saldoSumadora,0)
+    const saldoConsumido = mesProvisorioTotales.reduce(saldoSumadora,0)
     const avgViaje = saldoConsumido/nroServicios
-    console.log({saldoConsumido})
+    const saldoCargado = mesProvisorioTotales.reduce(saldoCargadora,0)
 
     setAllMesData({...allMesData,
       nroMovimientos,
       nroCargas,
       nroServicios,
       saldoConsumido,
-      avgViaje
+      avgViaje,
+      saldoCargado
     })
   },[mesProvisorioTotales])
 
@@ -262,21 +267,21 @@ export default function Main() {
   return (
     <>
       {inputSelect}
-      <h1>array USANDO ARRAY PROVISORIO</h1>
+      <p>array USANDO ARRAY PROVISORIO</p>
       {arrayDataMes}
-      <h1>Movimientos totales mes: {allMesData['nroMovimientos']}</h1>
-      <h1>Servicios totales mes: {allMesData['nroServicios']}</h1>
-      <h1>Cargas totales mes: {allMesData['nroCargas']}</h1>
-      <h1>Saldo Cargado: {allMesData['saldoCargado']}</h1>
-      <h1>Saldo Consumido: {allMesData['saldoConsumido']}</h1>
-      <h1>Promedio por viaje: {allMesData['avgViaje']}</h1>
-      <h1>array data mes</h1>
+      <p>Movimientos totales mes: {allMesData['nroMovimientos']}</p>
+      <p>Servicios totales mes: {allMesData['nroServicios']}</p>
+      <p>Cargas totales mes: {allMesData['nroCargas']}</p>
+      <p>Saldo Cargado: $ {allMesData['saldoCargado'].toFixed(2)}</p>
+      <p>Saldo Consumido: $ {allMesData['saldoConsumido'].toFixed(2)}</p>
+      <p>Promedio por viaje: $ {allMesData['avgViaje'].toFixed(2)}</p>
+      <p>array data mes</p>
       {arrayDataMes}
-      <h1>Viajes totales mes: {totalViajesMes}</h1>
-      <h1>Cargas totales mes: {cargaMes}</h1>
-      <h1>Saldo Cargado: {dineroCargado}</h1>
-      <h1>Saldo Consumido: {saldoConsumido}</h1>
-      <h1>Promedio por viaje: {avgViaje}</h1>
+      <p>Viajes totales mes: {totalViajesMes}</p>
+      <p>Cargas totales mes: {cargaMes}</p>
+      <p>Saldo Cargado: {dineroCargado}</p>
+      <p>Saldo Consumido: {saldoConsumido}</p>
+      <p>Promedio por viaje: {avgViaje}</p>
 
       <h2>Por sevicio utlizado</h2>
       <PieChart
