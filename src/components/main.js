@@ -36,8 +36,6 @@ export default function Main() {
   const [dineroCargado, setDineroCargado] = useState(0);
   const [saldoConsumido, setSaldoConsumido] = useState(0);
   const [avgViaje, setAvgViaje] = useState(0);
-  const [ejeY, setEjeY] = useState(false);
-  const [ejeX, setEjeX] = useState(false);
   const [dataPreciosUsados, setDataPreciosUsados] = useState([]);
   const [cantidadPreciosUsados, setCantidadPreciosUsados] = useState([]);
   const [fechasMes, setFechasMes] = useState([]);
@@ -157,14 +155,24 @@ export default function Main() {
   },[mes]);
 
   useEffect(()=>{
+
+    function saldoSumadora(prev,item){
+      return prev + Number(item.BalanceFormat.slice(2).replace(",", "."))
+    }
+
     const nroCargas = mesProvisorioTotales.filter(item => item.Type === 'Carga virtual').length;
     const nroMovimientos =  mesProvisorioTotales.length;
     const nroServicios = nroMovimientos - nroCargas;
+    const saldoConsumido = mesProvisorio.reduce(saldoSumadora,0)
+    const avgViaje = saldoConsumido/nroServicios
+    console.log({saldoConsumido})
 
     setAllMesData({...allMesData,
       nroMovimientos,
       nroCargas,
-      nroServicios
+      nroServicios,
+      saldoConsumido,
+      avgViaje
     })
   },[mesProvisorioTotales])
 
