@@ -56,7 +56,8 @@ export default function Main() {
     nroCargas: 0,
     saldoCargado: 0,
     saldoConsumido: 0,
-    avgViaje: 0
+    avgViaje: 0,
+    arrServiciosXMes: {}
   })
 
 
@@ -171,13 +172,26 @@ export default function Main() {
     const avgViaje = saldoConsumido/nroServicios
     const saldoCargado = mesProvisorioTotales.reduce(saldoCargadora,0)
 
+    const arrServiciosXMes = mesProvisorioTotales.reduce((acc,item)=>{
+      const found = acc.find(el=>el.id === item.Entity);
+      if(found){
+        found.value++;
+      }else{
+        acc.push({id:item.Entity,label:item.Entity,value:1})
+      }
+
+      return acc;
+    },[])
+ 
+
     setAllMesData({...allMesData,
       nroMovimientos,
       nroCargas,
       nroServicios,
       saldoConsumido,
       avgViaje,
-      saldoCargado
+      saldoCargado,
+      arrServiciosXMes
     })
   },[mesProvisorioTotales])
 
@@ -267,7 +281,6 @@ export default function Main() {
   return (
     <>
       {inputSelect}
-      <p>array USANDO ARRAY PROVISORIO</p>
       {arrayDataMes}
       <p>Movimientos totales mes: {allMesData['nroMovimientos']}</p>
       <p>Servicios totales mes: {allMesData['nroServicios']}</p>
@@ -275,15 +288,8 @@ export default function Main() {
       <p>Saldo Cargado: $ {allMesData['saldoCargado'].toFixed(2)}</p>
       <p>Saldo Consumido: $ {allMesData['saldoConsumido'].toFixed(2)}</p>
       <p>Promedio por viaje: $ {allMesData['avgViaje'].toFixed(2)}</p>
-      <p>array data mes</p>
-      {arrayDataMes}
-      <p>Viajes totales mes: {totalViajesMes}</p>
-      <p>Cargas totales mes: {cargaMes}</p>
-      <p>Saldo Cargado: {dineroCargado}</p>
-      <p>Saldo Consumido: {saldoConsumido}</p>
-      <p>Promedio por viaje: {avgViaje}</p>
 
-      <h2>Por sevicio utlizado</h2>
+      <h2>Servicios</h2>
       <PieChart
         slotProps={{
           legend: {
@@ -294,7 +300,7 @@ export default function Main() {
         }}
         series={[
           {
-            data: arrayServiciosMes,
+            data: allMesData['arrServiciosXMes'],
             highlightScope: { faded: "global", highlighted: "item" },
             faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
             innerRadius: 30,
@@ -303,6 +309,7 @@ export default function Main() {
         width={500}
         height={300}
       />
+
       <h2>Por precio del pasaje</h2>
       <BarChart
         yAxis={[{ scaleType: "band", data: dataPreciosUsados }]}
