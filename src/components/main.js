@@ -173,13 +173,16 @@ export default function Main() {
     const saldoCargado = mesProvisorioTotales.reduce(saldoCargadora,0)
 
     const arrServiciosXMes = mesProvisorioTotales.reduce((acc,item)=>{
-      const found = acc.find(el=>el.id === item.Entity);
-      if(found){
-        found.value++;
-      }else{
-        acc.push({id:item.Entity,label:item.Entity,value:1})
+      if(item.Type !== 'Carga virtual'){
+        const found = acc.find(el=>el.id === item.Entity);
+        console.log({item})
+        if(found){
+          found.value++;
+        }else{
+          acc.push({id:item.Entity,label:item.Entity,value:1})
+        }
+  
       }
-
       return acc;
     },[])
 
