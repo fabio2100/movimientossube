@@ -57,7 +57,8 @@ export default function Main() {
     saldoCargado: 0,
     saldoConsumido: 0,
     avgViaje: 0,
-    arrServiciosXMes: {}
+    arrServiciosXMes: {},
+    objPrecios: {}
   })
 
 
@@ -175,7 +176,6 @@ export default function Main() {
     const arrServiciosXMes = mesProvisorioTotales.reduce((acc,item)=>{
       if(item.Type !== 'Carga virtual'){
         const found = acc.find(el=>el.id === item.Entity);
-        console.log({item})
         if(found){
           found.value++;
         }else{
@@ -186,6 +186,24 @@ export default function Main() {
       return acc;
     },[])
 
+    const preciosArray = [];
+    const cantidadPreciosArray = [];
+
+    mesProvisorioTotales.reduce((acc,item)=>{
+      if(item.Type !== 'Carga virtual'){
+        const found = acc.find(el=>el.precio === item.BalanceFormat);
+        if(found){
+          found.total++
+        }else{
+          acc.push({precio:item.BalanceFormat,total:1})
+        }
+      }
+      return acc;
+    },[]).forEach(item => {
+      preciosArray.push(item.precio);
+      cantidadPreciosArray.push(item.total);
+    });
+
  
 
     setAllMesData({...allMesData,
@@ -195,8 +213,13 @@ export default function Main() {
       saldoConsumido,
       avgViaje,
       saldoCargado,
-      arrServiciosXMes
+      arrServiciosXMes,
+      objPrecios: {preciosArray,cantidadPreciosArray}
+
+      
     })
+
+    console.log({allMesData})
   },[mesProvisorioTotales])
 
 
@@ -314,14 +337,14 @@ export default function Main() {
         height={300}
       />}
 
-      <h2>Por precio del pasaje</h2>
-      <BarChart
-        yAxis={[{ scaleType: "band", data: dataPreciosUsados }]}
-        series={[{ data: cantidadPreciosUsados }]}
+    <h2>Por precio del pasaje</h2>
+      {Object.keys(allMesData.objPrecios).length !== 0 && <BarChart
+        yAxis={[{ scaleType: "band", data: allMesData.objPrecios.preciosArray }]}
+        series={[{ data: allMesData.objPrecios.cantidadPreciosArray }]}
         width={500}
         height={300}
         layout="horizontal"
-      />
+      />}
 
       <div className="lineChart">
         <h2>Evolución del saldo</h2>
@@ -333,25 +356,11 @@ export default function Main() {
               data: balancesMes,
             },
           ]}
-          width={longitudLineChart}
+          width={1500}
           height={300}
         />
       </div>
 
-      <div className="lineChart">
-        <h2>Evolución del saldo</h2>
-        <LineChart
-          grid={{ vertical: true, horizontal: true }}
-          xAxis={[{ data: fechaMes2, valueFormatter }]}
-          series={[
-            {
-              data: balancesMes2,
-            },
-          ]}
-          width={longitudLineChart2}
-          height={300}
-        />
-      </div>
     </>
   );
 }
