@@ -182,6 +182,7 @@ export default function Main() {
 
       return acc;
     },[])
+
  
 
     setAllMesData({...allMesData,
@@ -290,7 +291,7 @@ export default function Main() {
       <p>Promedio por viaje: $ {allMesData['avgViaje'].toFixed(2)}</p>
 
       <h2>Servicios</h2>
-      <PieChart
+      {allMesData['arrServiciosXMes'].length && <PieChart
         slotProps={{
           legend: {
             direction: "row",
@@ -308,7 +309,7 @@ export default function Main() {
         ]}
         width={500}
         height={300}
-      />
+      />}
 
       <h2>Por precio del pasaje</h2>
       <BarChart
