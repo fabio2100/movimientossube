@@ -21,7 +21,6 @@ import { useEffect, useState } from "react";
   }*/
 
 export default function Main() {
-  const [isScrolling, setIsScrolling] = useState(false);
   const [mes, setMes] = useState("all");
   const [mesProvisorioTotales, setMesProvisorioTotales] = useState([]);
   const [infoTotales, setInfoTotales] = useState([]);
