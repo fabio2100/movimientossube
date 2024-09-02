@@ -1,11 +1,6 @@
 import { BarChart, PieChart } from "@mui/x-charts";
 import Uno from "../movimientos/total082024.json";
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useEffect, useState } from "react";
 //Estructura
 /*{
@@ -28,6 +23,7 @@ import { useEffect, useState } from "react";
 export default function Main() {
   const [mes, setMes] = useState("all");
   const [mesProvisorioTotales, setMesProvisorioTotales] = useState([]);
+  const [infoTotales, setInfoTotales] = useState([]);
   const [allMesData, setAllMesData] = useState({
     nroMovimientos: 0,
     nroServicios: 0,
@@ -40,6 +36,50 @@ export default function Main() {
     objEvolucionSaldo: {},
   });
 
+  useEffect(() => {
+    const countByMonth = () => {
+      const data = Uno.Data.Items;
+      const result = {};
+      const monthNames = [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre",
+      ];
+
+      data.forEach((item) => {
+        if (item.Type !== "Carga virtual") {
+          const month = new Date(item.Date).getMonth(); // Obtener el mes (0-11) y ajustar a (1-12)
+          const balance = Math.abs(
+            Number(item.BalanceFormat.slice(2).replace(",", "."))
+          );
+          if (result[month]) {
+            result[month].cantidad++;
+            result[month].saldoConsumido += balance;
+          } else {
+            result[month] = {
+              mes: month + 1,
+              cantidad: 1,
+              nombre: monthNames[month],
+              saldoConsumido: balance,
+            };
+          }
+        }
+      });
+
+      return Object.values(result);
+    };
+    setInfoTotales(countByMonth());
+  }, []);
+
   const handleChange = (event) => {
     setMes(event.target.value);
   };
@@ -51,10 +91,10 @@ export default function Main() {
         return fecha.getMonth() + 1 === mes || mes === "all";
       })
     );
-
   }, [mes]);
 
   useEffect(() => {
+    console.log({ infoTotales });
     function saldoSumadora(prev, item) {
       const value =
         item.Type !== "Carga virtual"
@@ -138,7 +178,6 @@ export default function Main() {
       objPrecios: { preciosArray, cantidadPreciosArray },
       objEvolucionSaldo: { evolucionFechasSaldo, evolucionSaldos },
     });
-
   }, [mesProvisorioTotales]);
 
   const inputSelect = (
@@ -152,26 +191,54 @@ export default function Main() {
         onChange={handleChange}
       >
         <MenuItem value={"all"}>Todos los datos</MenuItem>
-        <MenuItem value={1}>Enero</MenuItem>
-        <MenuItem value={2}>Febrero</MenuItem>
-        <MenuItem value={3}>Marzo</MenuItem>
-        <MenuItem value={4}>Abril</MenuItem>
-        <MenuItem value={5}>Mayo</MenuItem>
-        <MenuItem value={6}>junio</MenuItem>
-        <MenuItem value={7}>Julio</MenuItem>
-        <MenuItem value={8}>Agosto</MenuItem>
-        <MenuItem value={9}>Setiembre</MenuItem>
-        <MenuItem value={10}>Octubre</MenuItem>
-        <MenuItem value={11}>Noviembre</MenuItem>
-        <MenuItem value={12}>Diciembre</MenuItem>
+        {infoTotales.map((dataMes) => (
+          <MenuItem id={dataMes.mes} value={dataMes.mes}>{dataMes.nombre}</MenuItem>
+        ))}
       </Select>
     </FormControl>
   );
 
-
-
   return (
     <>
+      <BarChart
+        width={500}
+        height={300}
+        dataset={infoTotales}
+        series={[
+          {
+            dataKey: "cantidad",
+            label: "Cantidad de servicios",
+            id: "pvId",
+            yAxisId: "leftAxisId",
+          },
+          {
+            dataKey: "saldoConsumido",
+            label: "Saldo consumido",
+            id: "uvId",
+            yAxisId: "rightAxisId",
+          },
+        ]}
+        xAxis={[{ scaleType: "band", dataKey: "nombre" }]}
+        yAxis={[{ id: 'leftAxisId' }, { id: 'rightAxisId' }]}
+        rightAxis="rightAxisId"
+      />
+      <BarChart
+        width={500}
+        height={300}
+        dataset={infoTotales}
+        series={[{ dataKey: "cantidad", label: "Cantidad de servicios" }]}
+        xAxis={[{ scaleType: "band", dataKey: "nombre" }]}
+
+      />
+
+      <BarChart
+        width={500}
+        height={300}
+        dataset={infoTotales}
+        series={[{ dataKey: "saldoConsumido", label: "Saldo consumido" }]}
+        xAxis={[{ scaleType: "band", dataKey: "nombre" }]}
+      />
+
       {inputSelect}
       <p>Movimientos totales mes: {allMesData["nroMovimientos"]}</p>
       <p>Servicios totales mes: {allMesData["nroServicios"]}</p>
@@ -215,7 +282,6 @@ export default function Main() {
           layout="horizontal"
         />
       )}
-
     </>
   );
 }
