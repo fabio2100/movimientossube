@@ -1,6 +1,6 @@
 import { BarChart, PieChart } from "@mui/x-charts";
 import Uno from "../movimientos/total082024.json";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
 import { useEffect, useState } from "react";
 //Estructura
 /*{
@@ -200,7 +200,9 @@ export default function Main() {
 
   return (
     <>
-      
+  
+
+  
       <BarChart
         width={500}
         height={300}
@@ -219,11 +221,38 @@ export default function Main() {
       />
 
       {inputSelect}
-      <p>Movimientos totales mes: {allMesData["nroMovimientos"]}</p>
-      <p>Servicios totales mes: {allMesData["nroServicios"]}</p>
-      <p>Cargas totales mes: {allMesData["nroCargas"]}</p>
-      <p>Saldo Cargado: $ {allMesData["saldoCargado"].toFixed(2)}</p>
+      
+      <ul>
+        <li>
+          <span>{allMesData["nroMovimientos"]}</span>
+          <span>Movimientos totales</span>
+        </li>
+        <li>
+          <span>{allMesData["nroServicios"]}</span>
+          <span>Servicios totales</span>
+        </li>
+        <li>
+          <span>$ {allMesData["saldoConsumido"].toFixed(2)}</span>
+          <span>Saldo consumido</span>
+        </li>
+        <li>
+          <span>{allMesData["nroCargas"]}</span>
+          <span>Número de cargas</span>
+        </li>
+        <li>
+          <span>$ {allMesData["saldoCargado"].toFixed(2)}</span>
+          <span>Saldo cargado</span>
+        </li>
+        <li>
+          <span> $ {allMesData["avgViaje"].toFixed(2)}</span>
+          <span>Promedio por viaje</span>
+        </li>
+      </ul>
+      <p>Movimientos totales : {allMesData["nroMovimientos"]}</p>
+      <p>Servicios totales : {allMesData["nroServicios"]}</p>
       <p>Saldo Consumido: $ {allMesData["saldoConsumido"].toFixed(2)}</p>
+      <p>Cargas totales : {allMesData["nroCargas"]}</p>
+      <p>Saldo Cargado: $ {allMesData["saldoCargado"].toFixed(2)}</p>
       <p>Promedio por viaje: $ {allMesData["avgViaje"].toFixed(2)}</p>
 
       <h2>Servicios</h2>
@@ -261,6 +290,7 @@ export default function Main() {
           layout="horizontal"
         />
       )}
+
     </>
   );
 }
