@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
   }*/
 
 export default function Main() {
+  const [isScrolling, setIsScrolling] = useState(false);
   const [mes, setMes] = useState("all");
   const [mesProvisorioTotales, setMesProvisorioTotales] = useState([]);
   const [infoTotales, setInfoTotales] = useState([]);
@@ -200,28 +201,7 @@ export default function Main() {
 
   return (
     <>
-      <BarChart
-        width={500}
-        height={300}
-        dataset={infoTotales}
-        series={[
-          {
-            dataKey: "cantidad",
-            label: "Cantidad de servicios",
-            id: "pvId",
-            yAxisId: "leftAxisId",
-          },
-          {
-            dataKey: "saldoConsumido",
-            label: "Saldo consumido",
-            id: "uvId",
-            yAxisId: "rightAxisId",
-          },
-        ]}
-        xAxis={[{ scaleType: "band", dataKey: "nombre" }]}
-        yAxis={[{ id: 'leftAxisId' }, { id: 'rightAxisId' }]}
-        rightAxis="rightAxisId"
-      />
+      
       <BarChart
         width={500}
         height={300}
@@ -235,7 +215,7 @@ export default function Main() {
         width={500}
         height={300}
         dataset={infoTotales}
-        series={[{ dataKey: "saldoConsumido", label: "Saldo consumido" }]}
+        series={[{ dataKey: "saldoConsumido", label: "Saldo consumido" ,valueFormatter: item => `$ ${item}` }]}
         xAxis={[{ scaleType: "band", dataKey: "nombre" }]}
       />
 
