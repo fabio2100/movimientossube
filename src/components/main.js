@@ -175,8 +175,9 @@ export default function Main() {
   }, [mesProvisorioTotales]);
 
   const rankingServicios = allMesData.arrServiciosXMes.length>0 ?
-   allMesData.arrServiciosXMes.slice(0,5).map(servicio => {
-     return <li id={servicio.id}><span>{servicio.label}</span> <span>{servicio.value} veces</span></li>
+   allMesData.arrServiciosXMes.map(servicio => {
+    const percentaje = (100*servicio.value/allMesData.nroServicios).toFixed(0)
+     return <li className="li-marker" key={servicio.id} style={{width:`${percentaje}%`,overflowX:'visible'}}><span>{servicio.label}</span> <span>{servicio.value} veces</span> <span> {percentaje}%</span></li>
   
   }) : "";
  
