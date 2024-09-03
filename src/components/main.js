@@ -1,6 +1,6 @@
 import { BarChart, PieChart } from "@mui/x-charts";
 import Uno from "../movimientos/total082024.json";
-import { FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useEffect, useState } from "react";
 //Estructura
 /*{
@@ -35,6 +35,8 @@ export default function Main() {
     arrServiciosXMesOrdenados: {},
     objPrecios: {},
   });
+
+  const [elementIsVisible,setElementIsVisible] = useState(false);
 
   useEffect(() => {
     const countByMonth = () => {
@@ -83,6 +85,10 @@ export default function Main() {
   const handleChange = (event) => {
     setMes(event.target.value);
   };
+
+  const handleElIsVisible = () => {
+    setElementIsVisible(!elementIsVisible)
+  }
 
   useEffect(() => {
     setMesProvisorioTotales(
@@ -150,14 +156,6 @@ export default function Main() {
         cantidadPreciosArray.push(item.total);
       });
 
-    const evolucionFechasSaldo = [];
-    const evolucionSaldos = [];
-
-    mesProvisorioTotales.forEach((item) => {
-      evolucionFechasSaldo.push(new Date(item.Date));
-      evolucionSaldos.push(Number(item.ValueFormat.slice(2).replace(",", ".")));
-    });
-
     const arrServiciosXMesOrdenados = arrServiciosXMes.sort((a,b)=> b.value - a.value)
 
     setAllMesData({
@@ -175,10 +173,10 @@ export default function Main() {
   }, [mesProvisorioTotales]);
 
   const rankingServicios = allMesData.arrServiciosXMes.length>0 ?
-   allMesData.arrServiciosXMes.map(servicio => {
+   allMesData.arrServiciosXMes.map((servicio,index) => {
     const percentaje = (100*servicio.value/allMesData.nroServicios).toFixed(0)
-     return <li className="li-marker" key={servicio.id} style={{width:`${percentaje}%`,overflowX:'visible'}}><span>{servicio.label}</span> <span>{servicio.value} veces</span> <span> {percentaje}%</span></li>
-  
+    const elementStyle = (index < 5 || index>5 && elementIsVisible) ? {width:`${percentaje}%`,overflowX:'visible' } : {width:`${percentaje}%`,overflowX:'visible',display: 'none' }
+     return <li className="li-marker" key={servicio.id} style={elementStyle}><span>{servicio.label}</span> <span>{servicio.value} veces</span> <span> {percentaje}%</span></li>
   }) : "";
  
   const inputSelect = (
@@ -193,7 +191,7 @@ export default function Main() {
       >
         <MenuItem value={"all"}>Todos los datos</MenuItem>
         {infoTotales.map((dataMes) => (
-          <MenuItem id={dataMes.mes} value={dataMes.mes}>{dataMes.nombre}</MenuItem>
+          <MenuItem key={dataMes.mes} value={dataMes.mes}>{dataMes.nombre}</MenuItem>
         ))}
       </Select>
     </FormControl>
@@ -252,6 +250,7 @@ export default function Main() {
 
       <h2>Servicios</h2>
       {allMesData["arrServiciosXMes"].length && <ul> {rankingServicios} </ul>}
+      {rankingServicios.length > 5 && <button onClick={handleElIsVisible}>Ver más</button>}
       {allMesData["arrServiciosXMes"].length && 
       
       (
