@@ -32,8 +32,8 @@ export default function Main() {
     saldoConsumido: 0,
     avgViaje: 0,
     arrServiciosXMes: {},
+    arrServiciosXMesOrdenados: {},
     objPrecios: {},
-    objEvolucionSaldo: {},
   });
 
   useEffect(() => {
@@ -158,13 +158,7 @@ export default function Main() {
       evolucionSaldos.push(Number(item.ValueFormat.slice(2).replace(",", ".")));
     });
 
-    /*arrayProvisorio.forEach((item) => {
-      arrayBalances.push(item.ValueFormat.slice(2).replace(",", "."));
-      arrayFechas.push(new Date(item.Date));
-      setFechaMes2([...fechaMes2,item.Date])
-      setBalancesMes2([...balancesMes2,item.ValueFormat.slice(2).replace(",", ".")])
-      setLongitudLineChart2(prev => prev + 10)
-    });*/
+    const arrServiciosXMesOrdenados = arrServiciosXMes.sort((a,b)=> b.value - a.value)
 
     setAllMesData({
       ...allMesData,
@@ -175,11 +169,17 @@ export default function Main() {
       avgViaje,
       saldoCargado,
       arrServiciosXMes,
+      arrServiciosXMesOrdenados,
       objPrecios: { preciosArray, cantidadPreciosArray },
-      objEvolucionSaldo: { evolucionFechasSaldo, evolucionSaldos },
     });
   }, [mesProvisorioTotales]);
 
+  const rankingServicios = allMesData.arrServiciosXMes.length>0 ?
+   allMesData.arrServiciosXMes.slice(0,5).map(servicio => {
+     return <li id={servicio.id}><span>{servicio.label}</span> <span>{servicio.value} veces</span></li>
+  
+  }) : "";
+ 
   const inputSelect = (
     <FormControl sx={{ m: 1, minWidth: 200 }}>
       <InputLabel id="demo-simple-select-label">Mes</InputLabel>
@@ -248,15 +248,12 @@ export default function Main() {
           <span>Promedio por viaje</span>
         </li>
       </ul>
-      <p>Movimientos totales : {allMesData["nroMovimientos"]}</p>
-      <p>Servicios totales : {allMesData["nroServicios"]}</p>
-      <p>Saldo Consumido: $ {allMesData["saldoConsumido"].toFixed(2)}</p>
-      <p>Cargas totales : {allMesData["nroCargas"]}</p>
-      <p>Saldo Cargado: $ {allMesData["saldoCargado"].toFixed(2)}</p>
-      <p>Promedio por viaje: $ {allMesData["avgViaje"].toFixed(2)}</p>
 
       <h2>Servicios</h2>
-      {allMesData["arrServiciosXMes"].length && (
+      {allMesData["arrServiciosXMes"].length && <ul> {rankingServicios} </ul>}
+      {allMesData["arrServiciosXMes"].length && 
+      
+      (
         <PieChart
           slotProps={{
             legend: {
