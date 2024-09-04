@@ -2,6 +2,10 @@ import { BarChart, PieChart } from "@mui/x-charts";
 import Uno from "../movimientos/total082024.json";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useEffect, useState } from "react";
+import {
+  AddCircleOutlineRounded,
+  RemoveCircleOutline,
+} from "@mui/icons-material";
 //Estructura
 /*{
     Success: true,
@@ -36,7 +40,7 @@ export default function Main() {
     objPrecios: {},
   });
 
-  const [elementIsVisible,setElementIsVisible] = useState(false);
+  const [elementIsVisible, setElementIsVisible] = useState(false);
 
   useEffect(() => {
     const countByMonth = () => {
@@ -84,11 +88,12 @@ export default function Main() {
 
   const handleChange = (event) => {
     setMes(event.target.value);
+    setElementIsVisible(false);
   };
 
   const handleElIsVisible = () => {
-    setElementIsVisible(!elementIsVisible)
-  }
+    setElementIsVisible(!elementIsVisible);
+  };
 
   useEffect(() => {
     setMesProvisorioTotales(
@@ -100,7 +105,6 @@ export default function Main() {
   }, [mes]);
 
   useEffect(() => {
-    console.log({ infoTotales });
     function saldoSumadora(prev, item) {
       const value =
         item.Type !== "Carga virtual"
@@ -156,7 +160,9 @@ export default function Main() {
         cantidadPreciosArray.push(item.total);
       });
 
-    const arrServiciosXMesOrdenados = arrServiciosXMes.sort((a,b)=> b.value - a.value)
+    const arrServiciosXMesOrdenados = arrServiciosXMes.sort(
+      (a, b) => b.value - a.value
+    );
 
     setAllMesData({
       ...allMesData,
@@ -172,15 +178,32 @@ export default function Main() {
     });
   }, [mesProvisorioTotales]);
 
-  const rankingServicios = allMesData.arrServiciosXMes.length>0 ?
-   allMesData.arrServiciosXMes.map((servicio,index) => {
-    const percentaje = (100*servicio.value/allMesData.nroServicios).toFixed(0)
-    const elementStyle = (index < 5 || index>5 && elementIsVisible) ? {width:`${percentaje}%`,overflowX:'visible' } : {width:`${percentaje}%`,overflowX:'visible',display: 'none' }
-     return <li className="li-marker" key={servicio.id} style={elementStyle}><span>{servicio.label}</span> <span>{servicio.value} veces</span> <span> {percentaje}%</span></li>
-  }) : "";
- 
+  const rankingServicios =
+    allMesData.arrServiciosXMes.length > 0
+      ? allMesData.arrServiciosXMes.map((servicio, index) => {
+          const percentaje = (
+            (100 * servicio.value) /
+            allMesData.nroServicios
+          ).toFixed(0);
+          const elementStyle =
+            index < 5 || (index > 5 && elementIsVisible)
+              ? { width: `${percentaje}%`, overflowX: "visible" }
+              : {
+                  width: `${percentaje}%`,
+                  overflowX: "visible",
+                  display: "none",
+                };
+          return (
+            <li className="li-marker" key={servicio.id} style={elementStyle}>
+              <span>{servicio.label}</span> <span>{servicio.value} veces</span>{" "}
+              <span> {percentaje}%</span>
+            </li>
+          );
+        })
+      : "";
+
   const inputSelect = (
-    <FormControl sx={{ m: 1, minWidth: 200 }}>
+    <FormControl fullWidth sx={{ minWidth: 200 }}>
       <InputLabel id="demo-simple-select-label">Mes</InputLabel>
       <Select
         labelId="demo-simple-select-label"
@@ -191,7 +214,9 @@ export default function Main() {
       >
         <MenuItem value={"all"}>Todos los datos</MenuItem>
         {infoTotales.map((dataMes) => (
-          <MenuItem key={dataMes.mes} value={dataMes.mes}>{dataMes.nombre}</MenuItem>
+          <MenuItem key={dataMes.mes} value={dataMes.mes}>
+            {dataMes.nombre}
+          </MenuItem>
         ))}
       </Select>
     </FormControl>
@@ -199,29 +224,36 @@ export default function Main() {
 
   return (
     <>
-  
-
-  
-      <BarChart
-        width={500}
-        height={300}
-        dataset={infoTotales}
-        series={[{ dataKey: "cantidad", label: "Cantidad de servicios" }]}
-        xAxis={[{ scaleType: "band", dataKey: "nombre" }]}
-
-      />
-
-      <BarChart
-        width={500}
-        height={300}
-        dataset={infoTotales}
-        series={[{ dataKey: "saldoConsumido", label: "Saldo consumido" ,valueFormatter: item => `$ ${item}` }]}
-        xAxis={[{ scaleType: "band", dataKey: "nombre" }]}
-      />
-
+      <h2>Servicios x mes</h2>
+      <div className="graph">
+        <BarChart
+          width={500}
+          height={300}
+          dataset={infoTotales}
+          series={[{ dataKey: "cantidad", label: "Cantidad de servicios" }]}
+          xAxis={[{ scaleType: "band", dataKey: "nombre" }]}
+        />
+      </div>
+      <h2>Saldo total x mes consumido</h2>
+      <div className="graph">
+        <BarChart
+          width={500}
+          height={300}
+          dataset={infoTotales}
+          series={[
+            {
+              dataKey: "saldoConsumido",
+              label: "Saldo consumido",
+              valueFormatter: (item) => `$ ${item}`,
+            },
+          ]}
+          xAxis={[{ scaleType: "band", dataKey: "nombre" }]}
+        />
+      </div>
+      <h2>Data x mes</h2>
       {inputSelect}
-      
-      <ul>
+
+      <ul className="ulInfo">
         <li>
           <span>{allMesData["nroMovimientos"]}</span>
           <span>Movimientos totales</span>
@@ -250,44 +282,53 @@ export default function Main() {
 
       <h2>Servicios</h2>
       {allMesData["arrServiciosXMes"].length && <ul> {rankingServicios} </ul>}
-      {rankingServicios.length > 5 && <button onClick={handleElIsVisible}>Ver más</button>}
-      {allMesData["arrServiciosXMes"].length && 
-      
-      (
-        <PieChart
-          slotProps={{
-            legend: {
-              direction: "row",
-              position: { vertical: "bottom", horizontal: "right" },
-              padding: 0,
-            },
-          }}
-          series={[
-            {
-              data: allMesData["arrServiciosXMes"],
-              highlightScope: { faded: "global", highlighted: "item" },
-              faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
-              innerRadius: 30,
-            },
-          ]}
-          width={500}
-          height={300}
-        />
+      {rankingServicios.length > 5 && !elementIsVisible ? (
+        <AddCircleOutlineRounded onClick={() => handleElIsVisible()} />
+      ) : (
+        <RemoveCircleOutline onClick={() => handleElIsVisible()} />
+      )}
+      {allMesData["arrServiciosXMes"].length && (
+        <div className="graph">
+          <PieChart
+            slotProps={{
+              legend: {
+                direction: "row",
+                position: { vertical: "bottom", horizontal: "right" },
+                padding: 0,
+              },
+            }}
+            series={[
+              {
+                data: allMesData["arrServiciosXMes"],
+                highlightScope: { faded: "global", highlighted: "item" },
+                faded: {
+                  innerRadius: 30,
+                  additionalRadius: -30,
+                  color: "gray",
+                },
+                innerRadius: 30,
+              },
+            ]}
+            width={500}
+            height={300}
+          />
+        </div>
       )}
 
       <h2>Por precio del pasaje</h2>
       {Object.keys(allMesData.objPrecios).length !== 0 && (
-        <BarChart
-          yAxis={[
-            { scaleType: "band", data: allMesData.objPrecios.preciosArray },
-          ]}
-          series={[{ data: allMesData.objPrecios.cantidadPreciosArray }]}
-          width={500}
-          height={300}
-          layout="horizontal"
-        />
+        <div className="graph">
+          <BarChart
+            yAxis={[
+              { scaleType: "band", data: allMesData.objPrecios.preciosArray },
+            ]}
+            series={[{ data: allMesData.objPrecios.cantidadPreciosArray }]}
+            width={500}
+            height={300}
+            layout="horizontal"
+          />
+        </div>
       )}
-
     </>
   );
 }

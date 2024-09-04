@@ -1,5 +1,11 @@
+
 .App {
   text-align: center;
+}
+
+body{
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .App-logo {
@@ -97,4 +103,18 @@ li span:nth-child(2){
 .divider {
 	min-height: 6rem;
 	background: lavender;
+}
+
+.graph{
+  display: flex;
+}
+
+h2{
+  text-align: center;
+}
+
+.ulInfo{
+  display: flex;
+  flex-direction: column;
+  margin-right: 3%;
 }
