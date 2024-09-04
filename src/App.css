@@ -73,10 +73,18 @@ li {
   border-radius: 4px;
 }
 
+.li-datainfo{
+  padding-left: 1em;
+}
+
 ::marker {
   font-weight: 700;
 	font-size: 1.5em;
 	color: turquoise;
+}
+
+.li-marker{
+  margin-right: 3%;
 }
 
 .li-marker::marker{

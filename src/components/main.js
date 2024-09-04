@@ -37,6 +37,7 @@ export default function Main() {
     avgViaje: 0,
     arrServiciosXMes: {},
     arrServiciosXMesOrdenados: {},
+    maximoViajes: 0,
     objPrecios: {},
   });
 
@@ -163,6 +164,7 @@ export default function Main() {
     const arrServiciosXMesOrdenados = arrServiciosXMes.sort(
       (a, b) => b.value - a.value
     );
+    const maximoViajes = arrServiciosXMesOrdenados[0]?.value;
 
     setAllMesData({
       ...allMesData,
@@ -174,6 +176,7 @@ export default function Main() {
       saldoCargado,
       arrServiciosXMes,
       arrServiciosXMesOrdenados,
+      maximoViajes,
       objPrecios: { preciosArray, cantidadPreciosArray },
     });
   }, [mesProvisorioTotales]);
@@ -185,11 +188,12 @@ export default function Main() {
             (100 * servicio.value) /
             allMesData.nroServicios
           ).toFixed(0);
+          const percentajeSobreMaximo = (100 * servicio.value / allMesData.maximoViajes)
           const elementStyle =
             index < 5 || (index > 5 && elementIsVisible)
-              ? { width: `${percentaje}%`, overflowX: "visible" }
+              ? { width: `${percentajeSobreMaximo}%`, overflowX: "visible" }
               : {
-                  width: `${percentaje}%`,
+                  width: `${percentajeSobreMaximo}%`,
                   overflowX: "visible",
                   display: "none",
                 };
@@ -254,27 +258,27 @@ export default function Main() {
       {inputSelect}
 
       <ul className="ulInfo">
-        <li>
+        <li className="li-datainfo">
           <span>{allMesData["nroMovimientos"]}</span>
           <span>Movimientos totales</span>
         </li>
-        <li>
+        <li className="li-datainfo">
           <span>{allMesData["nroServicios"]}</span>
           <span>Servicios totales</span>
         </li>
-        <li>
+        <li className="li-datainfo">
           <span>$ {allMesData["saldoConsumido"].toFixed(2)}</span>
           <span>Saldo consumido</span>
         </li>
-        <li>
+        <li className="li-datainfo">
           <span>{allMesData["nroCargas"]}</span>
           <span>Número de cargas</span>
         </li>
-        <li>
+        <li className="li-datainfo">
           <span>$ {allMesData["saldoCargado"].toFixed(2)}</span>
           <span>Saldo cargado</span>
         </li>
-        <li>
+        <li className="li-datainfo">
           <span> $ {allMesData["avgViaje"].toFixed(2)}</span>
           <span>Promedio por viaje</span>
         </li>
@@ -292,9 +296,10 @@ export default function Main() {
           <PieChart
             slotProps={{
               legend: {
-                direction: "row",
+                /*direction: "row",
                 position: { vertical: "bottom", horizontal: "right" },
-                padding: 0,
+                padding: 0,*/
+                hidden: true
               },
             }}
             series={[
