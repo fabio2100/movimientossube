@@ -48,18 +48,18 @@ export default function Main() {
       const data = Uno.Data.Items;
       const result = {};
       const monthNames = [
-        "Enero",
-        "Febrero",
-        "Marzo",
-        "Abril",
-        "Mayo",
-        "Junio",
-        "Julio",
-        "Agosto",
-        "Septiembre",
-        "Octubre",
-        "Noviembre",
-        "Diciembre",
+        "Ene",
+        "Feb",
+        "Mar",
+        "Abr",
+        "May",
+        "Jun",
+        "Jul",
+        "Ago",
+        "Set",
+        "Oct",
+        "Nov",
+        "Dic",
       ];
 
       data.forEach((item) => {
@@ -165,7 +165,6 @@ export default function Main() {
       (a, b) => b.value - a.value
     );
     const maximoViajes = arrServiciosXMesOrdenados[0]?.value;
-
     setAllMesData({
       ...allMesData,
       nroMovimientos,
