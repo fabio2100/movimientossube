@@ -8,6 +8,72 @@
       "PageCount": 0,
       "Items": [
         {
+          "Date": "2024-09-05T08:38:12",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 761",
+          "Place": "Interno 194",
+          "BalanceFormat": "$ -650,00",
+          "ValueFormat": "$ -435,44",
+          "IsNegative": true,
+          "IsNegativeBalance": true
+        },
+        {
+          "Date": "2024-09-04T18:25:24",
+          "Id": "0",
+          "Type": "Uso con RED SUBE 1",
+          "Entity": "LINEA 700",
+          "Place": "Interno 103",
+          "BalanceFormat": "$ 0,00",
+          "ValueFormat": "$ 214,56",
+          "IsNegative": false,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-09-04T18:09:22",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 950",
+          "Place": "Interno 115",
+          "BalanceFormat": "$ -650,00",
+          "ValueFormat": "$ 214,56",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-09-04T11:38:11",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 733",
+          "Place": "Interno 63",
+          "BalanceFormat": "$ -650,00",
+          "ValueFormat": "$ 864,56",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-09-04T08:45:28",
+          "Id": "0",
+          "Type": "Uso con RED SUBE 1",
+          "Entity": "LINEA 464",
+          "Place": "Interno 56",
+          "BalanceFormat": "$ 0,00",
+          "ValueFormat": "$ 1514,56",
+          "IsNegative": false,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-09-04T08:37:26",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 761",
+          "Place": "Interno 194",
+          "BalanceFormat": "$ -650,00",
+          "ValueFormat": "$ 1514,56",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
           "Date": "2024-08-30T17:16:05",
           "Id": "0",
           "Type": "Uso con RED SUBE 1",
