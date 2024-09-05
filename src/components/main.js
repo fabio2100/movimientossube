@@ -166,7 +166,6 @@ export default function Main() {
     );
     const maximoViajes = arrServiciosXMesOrdenados[0]?.value;
     setAllMesData({
-      ...allMesData,
       nroMovimientos,
       nroCargas,
       nroServicios,
