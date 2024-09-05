@@ -48,18 +48,18 @@ export default function Main() {
       const data = Uno.Data.Items;
       const result = {};
       const monthNames = [
-        "Ene",
-        "Feb",
-        "Mar",
-        "Abr",
-        "May",
-        "Jun",
-        "Jul",
-        "Ago",
-        "Set",
-        "Oct",
-        "Nov",
-        "Dic",
+        ["Ene","Enero"],
+        ["Feb","Febrero"],
+        ["Mar","Marzo"],
+        ["Abr","Abril"],
+        ["May","Mayo"],
+        ["Jun","Junio"],
+        ["Jul","Julio"],
+        ["Ago","Agosto"],
+        ["Set","Septiembre"],
+        ["Oct","Octubre"],
+        ["Nov","Noviembre"],
+        ["Dic","Diciembre"],
       ];
 
       data.forEach((item) => {
@@ -217,7 +217,7 @@ export default function Main() {
         <MenuItem value={"all"}>Todos los datos</MenuItem>
         {infoTotales.map((dataMes) => (
           <MenuItem key={dataMes.mes} value={dataMes.mes}>
-            {dataMes.nombre}
+            {dataMes.nombre[1]}
           </MenuItem>
         ))}
       </Select>
@@ -232,8 +232,8 @@ export default function Main() {
           width={500}
           height={300}
           dataset={infoTotales}
-          series={[{ dataKey: "cantidad", label: "Cantidad de servicios" }]}
-          xAxis={[{ scaleType: "band", dataKey: "nombre" }]}
+          series={[{ dataKey: "cantidad", label: "Cantidad de servicios"}]}
+          xAxis={[{ scaleType: "band", dataKey: "nombre",valueFormatter: item => item[0] }]}
         />
       </div>
       <h2>Saldo total x mes consumido</h2>
@@ -249,7 +249,7 @@ export default function Main() {
               valueFormatter: (item) => `$ ${item}`,
             },
           ]}
-          xAxis={[{ scaleType: "band", dataKey: "nombre" }]}
+          xAxis={[{ scaleType: "band", dataKey: "nombre", valueFormatter: item => item[0] }]}
         />
       </div>
       <h2>Data x mes</h2>
