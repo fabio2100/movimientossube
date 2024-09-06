@@ -64,7 +64,9 @@ export default function Main() {
 
       data.forEach((item) => {
         if (item.Type !== "Carga virtual") {
-          const month = new Date(item.Date).getMonth(); // Obtener el mes (0-11) y ajustar a (1-12)
+          const date = new Date(item.Date); // Obtener el mes (0-11) y ajustar a (1-12)
+          const month = date.getMonth()
+          const anio = date.getFullYear().toString().slice(-2);
           const balance = Math.abs(
             Number(item.BalanceFormat.slice(2).replace(",", "."))
           );
@@ -72,10 +74,12 @@ export default function Main() {
             result[month].cantidad++;
             result[month].saldoConsumido += balance;
           } else {
+            const monthWithYear = monthNames[month];
+            monthWithYear.push(anio)
             result[month] = {
               mes: month + 1,
               cantidad: 1,
-              nombre: monthNames[month],
+              nombre: monthWithYear,
               saldoConsumido: balance,
             };
           }
@@ -186,7 +190,7 @@ export default function Main() {
             (100 * servicio.value) /
             allMesData.nroServicios
           ).toFixed(0);
-          const percentajeSobreMaximo = (100 * servicio.value / allMesData.maximoViajes)
+          const percentajeSobreMaximo = index === 0 ? 97 : (100 * servicio.value / allMesData.maximoViajes)
           const elementStyle =
             index < 5 || (index > 5 && elementIsVisible)
               ? { width: `${percentajeSobreMaximo}%`, overflowX: "visible" }
@@ -205,6 +209,7 @@ export default function Main() {
       : "";
 
   const inputSelect = (
+    <div className="inputSelect">
     <FormControl fullWidth sx={{ minWidth: 200 }}>
       <InputLabel id="demo-simple-select-label">Mes</InputLabel>
       <Select
@@ -217,11 +222,12 @@ export default function Main() {
         <MenuItem value={"all"}>Todos los datos</MenuItem>
         {infoTotales.map((dataMes) => (
           <MenuItem key={dataMes.mes} value={dataMes.mes}>
-            {dataMes.nombre[1]}
+            {dataMes.nombre[1]} - {dataMes.nombre[2]}
           </MenuItem>
         ))}
       </Select>
     </FormControl>
+    </div>
   );
 
   return (
@@ -233,7 +239,7 @@ export default function Main() {
           height={300}
           dataset={infoTotales}
           series={[{ dataKey: "cantidad", label: "Cantidad de servicios"}]}
-          xAxis={[{ scaleType: "band", dataKey: "nombre",valueFormatter: item => item[0] }]}
+          xAxis={[{ scaleType: "band", dataKey: "nombre",valueFormatter: item => `${item[0]} ${item[2]}` }]}
         />
       </div>
       <h2>Saldo total x mes consumido</h2>
@@ -249,7 +255,7 @@ export default function Main() {
               valueFormatter: (item) => `$ ${item}`,
             },
           ]}
-          xAxis={[{ scaleType: "band", dataKey: "nombre", valueFormatter: item => item[0] }]}
+          xAxis={[{ scaleType: "band", dataKey: "nombre", valueFormatter: item => `${item[0]} ${item[2]}` }]}
         />
       </div>
       <h2>Data x mes</h2>
