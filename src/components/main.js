@@ -44,6 +44,7 @@ export default function Main() {
   const [elementIsVisible, setElementIsVisible] = useState(false);
 
   useEffect(() => {
+    document.title = "Movimientos Sube"
     const countByMonth = () => {
       const data = Uno.Data.Items;
       const result = {};
@@ -190,7 +191,8 @@ export default function Main() {
             (100 * servicio.value) /
             allMesData.nroServicios
           ).toFixed(0);
-          const percentajeSobreMaximo = index === 0 ? 97 : (100 * servicio.value / allMesData.maximoViajes)
+          const porcentajeRelativo = 100 * servicio.value / allMesData.maximoViajes;
+          const percentajeSobreMaximo = porcentajeRelativo === 100 ? 97 : porcentajeRelativo;
           const elementStyle =
             index < 5 || (index > 5 && elementIsVisible)
               ? { width: `${percentajeSobreMaximo}%`, overflowX: "visible" }

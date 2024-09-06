@@ -8,6 +8,39 @@
       "PageCount": 0,
       "Items": [
         {
+          "Date": "2024-09-05T19:28:35",
+          "Id": "0",
+          "Type": "Uso con RED SUBE 1",
+          "Entity": "LINEA 700",
+          "Place": "Interno 87",
+          "BalanceFormat": "$ 0,00",
+          "ValueFormat": "$ 914,56",
+          "IsNegative": false,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-09-05T19:02:34",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 733",
+          "Place": "Interno 43",
+          "BalanceFormat": "$ -650,00",
+          "ValueFormat": "$ 914,56",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-09-05T19:02:28",
+          "Id": "0",
+          "Type": "Carga virtual",
+          "Entity": "LINEA 733",
+          "Place": "Interno 43",
+          "BalanceFormat": "$ 2000,00",
+          "ValueFormat": "$ 1564,56",
+          "IsNegative": false,
+          "IsNegativeBalance": false
+        },
+        {
           "Date": "2024-09-05T08:47:44",
           "Id": "0",
           "Type": "Uso con RED SUBE 1",
