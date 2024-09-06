@@ -6,7 +6,6 @@ import {
   AddCircleOutlineRounded,
   RemoveCircleOutline,
 } from "@mui/icons-material";
-import {motion} from 'framer-motion'
 //Estructura
 /*{
     Success: true,
@@ -209,30 +208,6 @@ export default function Main() {
         })
       : "";
 
-  const RankingServiciosMotion = () => {
-    console.log(allMesData.arrServiciosXMes)
-    if(allMesData.arrServiciosXMes.length === undefined){
-      console.log('ingresal al fi')
-      return "<h1>nada por aca</h1>"
-    }
-    allMesData.arrServiciosXMes.map((servicio,index)=>{
-      const percentaje = (
-        (100 * servicio.value) /
-        allMesData.nroServicios
-      ).toFixed(0);
-      const percentajeSobreMaximo = index === 0 ? 97 : (100 * servicio.value / allMesData.maximoViajes)
-      return(
-      <li>{servicio.label}</li>
-     
-    )
-    })
-    
-  }
-
-  const rankingServiciosMotion = allMesData.arrServiciosXMes.length === undefined ? '' : 
-  allMesData.arrServiciosXMes.map((servicio,index)=>{
-    return <li>{servicio.label}</li>
-  })
 
   const inputSelect = (
     <div className="inputSelect">
@@ -258,17 +233,6 @@ export default function Main() {
 
   return (
     <>
-    <button onClick={()=>{setElementIsVisible(!elementIsVisible)}} >click</button>
-    <motion.div
-      initial={{ opacity: 0, paddingTop: '300px'}}
-      animate={{ opacity: elementIsVisible ? 1 : 0, paddingTop: elementIsVisible ? 0 : '800px' }}
-      transition={{ duration: 0.5 }}
-      style={{ overflowX: "visible", display: elementIsVisible ? "block" : "none" , paddingTop: '300px'}}
-    >
-      <ul>
-        {rankingServiciosMotion}
-      </ul>
-    </motion.div>
       <h2>Servicios x mes</h2>
       <div className="graph">
         <BarChart
