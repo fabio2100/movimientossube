@@ -290,11 +290,13 @@ export default function Main() {
 
       <h2>Servicios</h2>
       {allMesData["arrServiciosXMes"].length && <ul> {rankingServicios} </ul>}
+      <div className="icon">
       {rankingServicios.length > 5 && !elementIsVisible ? (
-        <AddCircleOutlineRounded onClick={() => handleElIsVisible()} />
+        <AddCircleOutlineRounded fontSize="large" className="icon" onClick={() => handleElIsVisible()} />
       ) : (
-        <RemoveCircleOutline onClick={() => handleElIsVisible()} />
+        <RemoveCircleOutline fontSize="large" className="icon" onClick={() => handleElIsVisible()} />
       )}
+      </div>
       {allMesData["arrServiciosXMes"].length && (
         <div className="graph">
           <PieChart

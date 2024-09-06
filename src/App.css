@@ -133,3 +133,9 @@ h2{
   margin-left: 2em;
   margin-right: 1em;
 }
+
+.icon{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1em;
+}
