@@ -26,7 +26,12 @@ import {
 
 export default function MainData({setIsValid,file=0,setFileContent}) {
 
-  const mainFile = file ? file : example;
+
+  const exampleAlter = isAlterArray(example);
+
+
+
+  const mainFile = file || exampleAlter;
   const [mes, setMes] = useState("all");
   const [mesProvisorioTotales, setMesProvisorioTotales] = useState([]);
   const [infoTotales, setInfoTotales] = useState([]);
@@ -93,6 +98,16 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
     };
     setInfoTotales(countByMonth());
   }, []);
+
+  function isAlterArray(example){
+    if(Math.random()<.5){
+      return example
+    }
+    const tasaCambio = Math.random();
+    const exampleItemsAlter = example.Data.Items.filter(item => Math.random()>tasaCambio && item )
+    
+    return {...example,Data:{...example.Data,Items:exampleItemsAlter}}
+  }
 
   const handleChange = (event) => {
     setMes(event.target.value);
