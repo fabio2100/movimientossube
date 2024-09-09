@@ -11,7 +11,8 @@ export default function Main() {
   const uploadFile = () => {
     return (
       <>
-      <JsonFileUpload setFileContent={setFileContent} fileContent={fileContent}/>
+      <div className="mainBotonera">
+      <JsonFileUpload setFileContent={setFileContent} fileContent={fileContent} setIsValid={setIsValid} isValid={isValid}/>
         <Button
           variant="outlined"
           onClick={() => {
@@ -20,6 +21,7 @@ export default function Main() {
         >
           Ver ejemplo
         </Button>
+        </div>
       </>
     );
   };

@@ -24,7 +24,7 @@ import {
     HttpStatusCode: 200
   }*/
 
-export default function MainData({setIsValid,file=0}) {
+export default function MainData({setIsValid,file=0,setFileContent}) {
 
   const mainFile = file ? file : example;
   const [mes, setMes] = useState("all");
@@ -235,9 +235,10 @@ export default function MainData({setIsValid,file=0}) {
     </div>
   );
 
+
   return (
     <>
-    <Button variant="outlined" onClick={()=>{setIsValid(false)}}>Volver</Button>
+    <Button fullWidth variant="outlined" sx={{marginTop:1}} onClick={()=>{ !file ?  setIsValid(false) : setFileContent(false)}}>Volver</Button>
       <h2>Servicios x mes</h2>
       <div className="graph">
         <BarChart

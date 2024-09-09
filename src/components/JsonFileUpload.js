@@ -1,7 +1,8 @@
 import { Button } from '@mui/material';
 import React, { useState } from 'react';
+import MainData from './mainData';
 
-function JsonFileUpload({setFileContent,fileContent}) {
+function JsonFileUpload({setFileContent,fileContent,setIsValid,isValid}) {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -24,7 +25,7 @@ function JsonFileUpload({setFileContent,fileContent}) {
 
   return (
     <div>
-      <Button variant="outlined"><input type="file" accept=".json" onChange={handleFileChange} /></Button>
+      {!fileContent ? <Button fullWidth variant="outlined" sx={{marginBottom:1}}><input type="file" accept=".json" onChange={handleFileChange} /></Button> : <MainData setIsValid={setIsValid} file={fileContent} setFileContent={setFileContent} /> } 
     </div>
   );
 }
