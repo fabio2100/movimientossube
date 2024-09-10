@@ -1,5 +1,6 @@
 import { BarChart, PieChart } from "@mui/x-charts";
 import example from "../movimientos/total082024.json";
+import example2 from "../movimientos/subeDigital.json"
 import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
@@ -28,9 +29,7 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
 
 
   const exampleAlter = isAlterArray(example);
-
-
-
+  
   const mainFile = file || exampleAlter;
   const [mes, setMes] = useState("all");
   const [mesProvisorioTotales, setMesProvisorioTotales] = useState([]);
@@ -71,7 +70,7 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
       ];
 
       data.forEach((item) => {
-        if (item.Type !== "Carga virtual") {
+        if (item.Type !== "Carga virtual" && item.Type !== "Carga Tarjeta Digital") {
           const date = new Date(item.Date); // Obtener el mes (0-11) y ajustar a (1-12)
           const month = date.getMonth()
           const anio = date.getFullYear().toString().slice(-2);
@@ -130,20 +129,20 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
   useEffect(() => {
     function saldoSumadora(prev, item) {
       const value =
-        item.Type !== "Carga virtual"
+        (!['Carga virtual','Carga Tarjeta Digital'].includes(item.Type))
           ? Math.abs(Number(item.BalanceFormat.slice(2).replace(",", ".")))
           : 0;
       return prev + value;
     }
     function saldoCargadora(prev, item) {
       const value =
-        item.Type === "Carga virtual"
+        (['Carga virtual','Carga Tarjeta Digital'].includes(item.Type))
           ? Math.abs(Number(item.BalanceFormat.slice(2).replace(",", ".")))
           : 0;
       return prev + value;
     }
     const nroCargas = mesProvisorioTotales.filter(
-      (item) => item.Type === "Carga virtual"
+      (item) => (['Carga virtual','Carga Tarjeta Digital'].includes(item.Type))
     ).length;
     const nroMovimientos = mesProvisorioTotales.length;
     const nroServicios = nroMovimientos - nroCargas;
@@ -152,7 +151,7 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
     const saldoCargado = mesProvisorioTotales.reduce(saldoCargadora, 0);
 
     const arrServiciosXMes = mesProvisorioTotales.reduce((acc, item) => {
-      if (item.Type !== "Carga virtual") {
+      if (item.Type !== "Carga virtual" && item.Type !== "Carga Tarjeta Digital") {
         const found = acc.find((el) => el.id === item.Entity);
         if (found) {
           found.value++;
@@ -168,7 +167,7 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
 
     mesProvisorioTotales
       .reduce((acc, item) => {
-        if (item.Type !== "Carga virtual") {
+        if (item.Type !== "Carga virtual" && item.Type !== "Carga Tarjeta Digital") {
           const found = acc.find((el) => el.precio === item.BalanceFormat);
           if (found) {
             found.total++;

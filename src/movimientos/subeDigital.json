@@ -1,0 +1,68 @@
+{
+    "Success": true,
+    "Message": "",
+    "Data": {
+      "Count": 4,
+      "PageSize": 0,
+      "CurrentPage": 0,
+      "PageCount": 0,
+      "Items": [
+        {
+          "Date": "2024-09-05T18:14:13",
+          "Id": "0",
+          "Type": "Uso en Transporte Digital",
+          "Entity": "LINEA 733",
+          "Place": "Interno 66",
+          "BalanceFormat": "$ -650,00",
+          "ValueFormat": "$ 50,00",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-09-03T18:28:57",
+          "Id": "0",
+          "Type": "Uso en Transporte Digital",
+          "Entity": "LINEA 721",
+          "Place": "Interno 104",
+          "BalanceFormat": "$ -650,00",
+          "ValueFormat": "$ 700,00",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-09-03T18:13:00",
+          "Id": "0",
+          "Type": "Uso en Transporte Digital",
+          "Entity": "LINEA 110",
+          "Place": "Interno 72",
+          "BalanceFormat": "$ -650,00",
+          "ValueFormat": "$ 1350,00",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-09-03T18:06:27",
+          "Id": "0",
+          "Type": "Carga Tarjeta Digital",
+          "Entity": "",
+          "Place": "",
+          "BalanceFormat": "$ 2000,00",
+          "ValueFormat": "$ 2000,00",
+          "IsNegative": false,
+          "IsNegativeBalance": false
+        }
+      ],
+      "Message": "",
+      "EntityList": [
+        "LINEA 733",
+        "LINEA 721",
+        "LINEA 110"
+      ],
+      "MovementTypeList": [
+        "Uso en Transporte Digital",
+        "Carga Tarjeta Digital"
+      ]
+    },
+    "Code": "",
+    "HttpStatusCode": 200
+  }
