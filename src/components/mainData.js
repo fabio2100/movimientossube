@@ -1,7 +1,13 @@
 import { BarChart, PieChart } from "@mui/x-charts";
 import example from "../movimientos/total082024.json";
-import example2 from "../movimientos/subeDigital.json"
-import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import example2 from "../movimientos/subeDigital.json";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import {
   AddCircleOutlineRounded,
@@ -25,12 +31,10 @@ import {
     HttpStatusCode: 200
   }*/
 
-export default function MainData({setIsValid,file=0,setFileContent}) {
-
-
+export default function MainData({ setIsValid, file = 0, setFileContent }) {
   //const exampleAlter = isAlterArray(example);
   const exampleAlter = example;
-  
+
   const mainFile = file || exampleAlter;
   const [mes, setMes] = useState("all");
   const [mesProvisorioTotales, setMesProvisorioTotales] = useState([]);
@@ -46,35 +50,38 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
     arrServiciosXMesOrdenados: {},
     maximoViajes: 0,
     objPrecios: {},
-    objTipos: {}
+    objTipos: {},
   });
 
   const [elementIsVisible, setElementIsVisible] = useState(false);
 
   useEffect(() => {
-    document.title = "Movimientos Sube"
+    document.title = "Movimientos Sube";
     const countByMonth = () => {
       const data = mainFile.Data.Items;
       const result = {};
       const monthNames = [
-        ["Ene","Enero"],
-        ["Feb","Febrero"],
-        ["Mar","Marzo"],
-        ["Abr","Abril"],
-        ["May","Mayo"],
-        ["Jun","Junio"],
-        ["Jul","Julio"],
-        ["Ago","Agosto"],
-        ["Set","Septiembre"],
-        ["Oct","Octubre"],
-        ["Nov","Noviembre"],
-        ["Dic","Diciembre"],
+        ["Ene", "Enero"],
+        ["Feb", "Febrero"],
+        ["Mar", "Marzo"],
+        ["Abr", "Abril"],
+        ["May", "Mayo"],
+        ["Jun", "Junio"],
+        ["Jul", "Julio"],
+        ["Ago", "Agosto"],
+        ["Set", "Septiembre"],
+        ["Oct", "Octubre"],
+        ["Nov", "Noviembre"],
+        ["Dic", "Diciembre"],
       ];
 
       data.forEach((item) => {
-        if (item.Type !== "Carga virtual" && item.Type !== "Carga Tarjeta Digital") {
+        if (
+          item.Type !== "Carga virtual" &&
+          item.Type !== "Carga Tarjeta Digital"
+        ) {
           const date = new Date(item.Date); // Obtener el mes (0-11) y ajustar a (1-12)
-          const month = date.getMonth()
+          const month = date.getMonth();
           const anio = date.getFullYear().toString().slice(-2);
           const balance = Math.abs(
             Number(item.BalanceFormat.slice(2).replace(",", "."))
@@ -84,7 +91,7 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
             result[month].saldoConsumido += balance;
           } else {
             const monthWithYear = monthNames[month];
-            monthWithYear.push(anio)
+            monthWithYear.push(anio);
             result[month] = {
               mes: month + 1,
               cantidad: 1,
@@ -100,14 +107,16 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
     setInfoTotales(countByMonth());
   }, []);
 
-  function isAlterArray(example){
-    if(Math.random()<.5){
-      return example
+  function isAlterArray(example) {
+    if (Math.random() < 0.5) {
+      return example;
     }
     const tasaCambio = Math.random();
-    const exampleItemsAlter = example.Data.Items.filter(item => Math.random()>tasaCambio && item )
-    
-    return {...example,Data:{...example.Data,Items:exampleItemsAlter}}
+    const exampleItemsAlter = example.Data.Items.filter(
+      (item) => Math.random() > tasaCambio && item
+    );
+
+    return { ...example, Data: { ...example.Data, Items: exampleItemsAlter } };
   }
 
   const handleChange = (event) => {
@@ -130,21 +139,23 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
 
   useEffect(() => {
     function saldoSumadora(prev, item) {
-      const value =
-        (!['Carga virtual','Carga Tarjeta Digital'].includes(item.Type))
-          ? Math.abs(Number(item.BalanceFormat.slice(2).replace(",", ".")))
-          : 0;
+      const value = !["Carga virtual", "Carga Tarjeta Digital"].includes(
+        item.Type
+      )
+        ? Math.abs(Number(item.BalanceFormat.slice(2).replace(",", ".")))
+        : 0;
       return prev + value;
     }
     function saldoCargadora(prev, item) {
-      const value =
-        (['Carga virtual','Carga Tarjeta Digital'].includes(item.Type))
-          ? Math.abs(Number(item.BalanceFormat.slice(2).replace(",", ".")))
-          : 0;
+      const value = ["Carga virtual", "Carga Tarjeta Digital"].includes(
+        item.Type
+      )
+        ? Math.abs(Number(item.BalanceFormat.slice(2).replace(",", ".")))
+        : 0;
       return prev + value;
     }
-    const nroCargas = mesProvisorioTotales.filter(
-      (item) => (['Carga virtual','Carga Tarjeta Digital'].includes(item.Type))
+    const nroCargas = mesProvisorioTotales.filter((item) =>
+      ["Carga virtual", "Carga Tarjeta Digital"].includes(item.Type)
     ).length;
     const nroMovimientos = mesProvisorioTotales.length;
     const nroServicios = nroMovimientos - nroCargas;
@@ -153,7 +164,10 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
     const saldoCargado = mesProvisorioTotales.reduce(saldoCargadora, 0);
 
     const arrServiciosXMes = mesProvisorioTotales.reduce((acc, item) => {
-      if (item.Type !== "Carga virtual" && item.Type !== "Carga Tarjeta Digital") {
+      if (
+        item.Type !== "Carga virtual" &&
+        item.Type !== "Carga Tarjeta Digital"
+      ) {
         const found = acc.find((el) => el.id === item.Entity);
         if (found) {
           found.value++;
@@ -169,7 +183,10 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
 
     mesProvisorioTotales
       .reduce((acc, item) => {
-        if (item.Type !== "Carga virtual" && item.Type !== "Carga Tarjeta Digital") {
+        if (
+          item.Type !== "Carga virtual" &&
+          item.Type !== "Carga Tarjeta Digital"
+        ) {
           const found = acc.find((el) => el.precio === item.BalanceFormat);
           if (found) {
             found.total++;
@@ -194,21 +211,19 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
 
     mesProvisorioTotales
       .reduce((acc, item) => {
-          const found = acc.find((el) => el.Type === item.Type);
-          if (found) {
-            found.total++;
-          } else {
-            acc.push({ Type: item.Type, total: 1 });
-          }
-        
+        const found = acc.find((el) => el.Type === item.Type);
+        if (found) {
+          found.total++;
+        } else {
+          acc.push({ Type: item.Type, total: 1 });
+        }
+
         return acc;
       }, [])
       .forEach((item) => {
         tiposArray.push(item.Type);
         cantidadTiposArray.push(item.total);
       });
-
-
 
     setAllMesData({
       nroMovimientos,
@@ -221,7 +236,7 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
       arrServiciosXMesOrdenados,
       maximoViajes,
       objPrecios: { preciosArray, cantidadPreciosArray },
-      objTipos: {tiposArray, cantidadTiposArray}
+      objTipos: { tiposArray, cantidadTiposArray },
     });
   }, [mesProvisorioTotales]);
 
@@ -232,8 +247,10 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
             (100 * servicio.value) /
             allMesData.nroServicios
           ).toFixed(0);
-          const porcentajeRelativo = 100 * servicio.value / allMesData.maximoViajes;
-          const percentajeSobreMaximo = porcentajeRelativo === 100 ? 97 : porcentajeRelativo;
+          const porcentajeRelativo =
+            (100 * servicio.value) / allMesData.maximoViajes;
+          const percentajeSobreMaximo =
+            porcentajeRelativo === 100 ? 97 : porcentajeRelativo;
           const elementStyle =
             index < 5 || (index > 5 && elementIsVisible)
               ? { width: `${percentajeSobreMaximo}%`, overflowX: "visible" }
@@ -251,41 +268,54 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
         })
       : "";
 
-
   const inputSelect = (
     <div className="inputSelect">
-    <FormControl fullWidth sx={{ minWidth: 200 }}>
-      <InputLabel id="demo-simple-select-label">Mes</InputLabel>
-      <Select
-        labelId="demo-simple-select-label"
-        id="demo-simple-select"
-        value={mes}
-        label="Mes"
-        onChange={handleChange}
-      >
-        <MenuItem value={"all"}>Todos los datos</MenuItem>
-        {infoTotales.map((dataMes) => (
-          <MenuItem key={dataMes.mes} value={dataMes.mes}>
-            {dataMes.nombre[1]} - {dataMes.nombre[2]}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+      <FormControl fullWidth sx={{ minWidth: 200 }}>
+        <InputLabel id="demo-simple-select-label">Mes</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={mes}
+          label="Mes"
+          onChange={handleChange}
+        >
+          <MenuItem value={"all"}>Todos los datos</MenuItem>
+          {infoTotales.map((dataMes) => (
+            <MenuItem key={dataMes.mes} value={dataMes.mes}>
+              {dataMes.nombre[1]} - {dataMes.nombre[2]}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     </div>
   );
 
-
   return (
     <>
-    <Button fullWidth variant="outlined" sx={{marginTop:1}} onClick={()=>{ !file ?  setIsValid(false) : setFileContent(false)}}>Volver</Button>
+      <Button
+        fullWidth
+        variant="outlined"
+        sx={{ marginTop: 1 }}
+        onClick={() => {
+          !file ? setIsValid(false) : setFileContent(false);
+        }}
+      >
+        Volver
+      </Button>
       <h2>Servicios x mes</h2>
       <div className="graph">
         <BarChart
           width={500}
           height={300}
           dataset={infoTotales}
-          series={[{ dataKey: "cantidad", label: "Cantidad de servicios"}]}
-          xAxis={[{ scaleType: "band", dataKey: "nombre",valueFormatter: item => `${item[0]} ${item[2]}` }]}
+          series={[{ dataKey: "cantidad", label: "Cantidad de servicios" }]}
+          xAxis={[
+            {
+              scaleType: "band",
+              dataKey: "nombre",
+              valueFormatter: (item) => `${item[0]} ${item[2]}`,
+            },
+          ]}
         />
       </div>
       <h2>Saldo total x mes consumido</h2>
@@ -301,7 +331,13 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
               valueFormatter: (item) => `$ ${item}`,
             },
           ]}
-          xAxis={[{ scaleType: "band", dataKey: "nombre", valueFormatter: item => `${item[0]} ${item[2]}` }]}
+          xAxis={[
+            {
+              scaleType: "band",
+              dataKey: "nombre",
+              valueFormatter: (item) => `${item[0]} ${item[2]}`,
+            },
+          ]}
         />
       </div>
       <h2>Data x mes</h2>
@@ -337,11 +373,19 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
       <h2>Servicios</h2>
       {allMesData["arrServiciosXMes"].length && <ul> {rankingServicios} </ul>}
       <div className="icon">
-      {rankingServicios.length > 5 && !elementIsVisible ? (
-        <AddCircleOutlineRounded fontSize="large" className="icon" onClick={() => handleElIsVisible()} />
-      ) : (
-        <RemoveCircleOutline fontSize="large" className="icon" onClick={() => handleElIsVisible()} />
-      )}
+        {rankingServicios.length > 5 && !elementIsVisible ? (
+          <AddCircleOutlineRounded
+            fontSize="large"
+            className="icon"
+            onClick={() => handleElIsVisible()}
+          />
+        ) : (
+          <RemoveCircleOutline
+            fontSize="large"
+            className="icon"
+            onClick={() => handleElIsVisible()}
+          />
+        )}
       </div>
       {allMesData["arrServiciosXMes"].length && (
         <div className="graph">
@@ -351,7 +395,7 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
                 /*direction: "row",
                 position: { vertical: "bottom", horizontal: "right" },
                 padding: 0,*/
-                hidden: true
+                hidden: true,
               },
             }}
             series={[
@@ -372,7 +416,7 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
         </div>
       )}
 
-<h2>Por tipo de servicio</h2>
+      <h2>Por tipo de servicio</h2>
       {Object.keys(allMesData.objTipos).length !== 0 && (
         <div className="graph">
           <BarChart
