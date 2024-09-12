@@ -8,6 +8,17 @@
       "PageCount": 0,
       "Items": [
         {
+          "Date": "2024-09-12T08:39:36",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 733",
+          "Place": "Interno 43",
+          "BalanceFormat": "$ -650,00",
+          "ValueFormat": "$ 964,56",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
           "Date": "2024-09-11T08:38:52",
           "Id": "0",
           "Type": "Uso",

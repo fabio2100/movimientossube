@@ -28,7 +28,8 @@ import {
 export default function MainData({setIsValid,file=0,setFileContent}) {
 
 
-  const exampleAlter = isAlterArray(example);
+  //const exampleAlter = isAlterArray(example);
+  const exampleAlter = example;
   
   const mainFile = file || exampleAlter;
   const [mes, setMes] = useState("all");
@@ -45,6 +46,7 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
     arrServiciosXMesOrdenados: {},
     maximoViajes: 0,
     objPrecios: {},
+    objTipos: {}
   });
 
   const [elementIsVisible, setElementIsVisible] = useState(false);
@@ -186,6 +188,28 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
       (a, b) => b.value - a.value
     );
     const maximoViajes = arrServiciosXMesOrdenados[0]?.value;
+
+    const tiposArray = [];
+    const cantidadTiposArray = [];
+
+    mesProvisorioTotales
+      .reduce((acc, item) => {
+          const found = acc.find((el) => el.Type === item.Type);
+          if (found) {
+            found.total++;
+          } else {
+            acc.push({ Type: item.Type, total: 1 });
+          }
+        
+        return acc;
+      }, [])
+      .forEach((item) => {
+        tiposArray.push(item.Type);
+        cantidadTiposArray.push(item.total);
+      });
+
+
+
     setAllMesData({
       nroMovimientos,
       nroCargas,
@@ -197,6 +221,7 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
       arrServiciosXMesOrdenados,
       maximoViajes,
       objPrecios: { preciosArray, cantidadPreciosArray },
+      objTipos: {tiposArray, cantidadTiposArray}
     });
   }, [mesProvisorioTotales]);
 
@@ -343,6 +368,21 @@ export default function MainData({setIsValid,file=0,setFileContent}) {
             ]}
             width={500}
             height={300}
+          />
+        </div>
+      )}
+
+<h2>Por tipo de servicio</h2>
+      {Object.keys(allMesData.objTipos).length !== 0 && (
+        <div className="graph">
+          <BarChart
+            yAxis={[
+              { scaleType: "band", data: allMesData.objTipos.tiposArray },
+            ]}
+            series={[{ data: allMesData.objTipos.cantidadTiposArray }]}
+            width={500}
+            height={300}
+            layout="horizontal"
           />
         </div>
       )}

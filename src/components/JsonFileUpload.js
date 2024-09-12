@@ -25,7 +25,9 @@ function JsonFileUpload({setFileContent,fileContent,setIsValid,isValid}) {
 
   return (
     <div>
-      {!fileContent ? <Button fullWidth variant="outlined" sx={{marginBottom:1}}><input type="file" accept=".json" onChange={handleFileChange} /></Button> : <MainData setIsValid={setIsValid} file={fileContent} setFileContent={setFileContent} /> } 
+      {!fileContent ? 
+      <Button fullWidth variant="outlined" sx={{marginBottom:1}}><input type="file" accept=".json" onChange={handleFileChange} /></Button> :
+      <MainData setIsValid={setIsValid} file={fileContent} setFileContent={setFileContent} /> } 
     </div>
   );
 }
