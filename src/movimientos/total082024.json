@@ -8,6 +8,17 @@
       "PageCount": 0,
       "Items": [
         {
+          "Date": "2024-09-12T20:28:02",
+          "Id": "0",
+          "Type": "Uso con RED SUBE 1",
+          "Entity": "LINEA 100",
+          "Place": "Interno 10084",
+          "BalanceFormat": "$ 0,00",
+          "ValueFormat": "$ -335,44",
+          "IsNegative": false,
+          "IsNegativeBalance": true
+        },
+        {
           "Date": "2024-09-12T20:13:01",
           "Id": "0",
           "Type": "Uso",
