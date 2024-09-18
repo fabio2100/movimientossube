@@ -8,6 +8,39 @@
       "PageCount": 0,
       "Items": [
         {
+          "Date": "2024-09-18T08:37:45",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 733",
+          "Place": "Interno 66",
+          "BalanceFormat": "$ -390,00",
+          "ValueFormat": "$ 974,56",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-09-17T18:26:08",
+          "Id": "0",
+          "Type": "Uso con RED SUBE 1",
+          "Entity": "LINEA 700",
+          "Place": "Interno 53",
+          "BalanceFormat": "$ 0,00",
+          "ValueFormat": "$ 1364,56",
+          "IsNegative": false,
+          "IsNegativeBalance": false
+        },
+        {
+          "Date": "2024-09-17T18:08:03",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 110",
+          "Place": "Interno 49",
+          "BalanceFormat": "$ -650,00",
+          "ValueFormat": "$ 1364,56",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+        },
+        {
           "Date": "2024-09-17T08:46:46",
           "Id": "0",
           "Type": "Uso con RED SUBE 1",
