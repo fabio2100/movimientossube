@@ -240,14 +240,11 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
             counts[day - 1]++;
           }
         });
-        console.log({ arrDias });
         return { arrDias, counts };
       } else {
         return false;
       }
     })();
-
-    console.log({ arrViajesXDia });
 
     setAllMesData({
       monthNames: [
