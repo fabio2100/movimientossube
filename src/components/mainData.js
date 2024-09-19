@@ -1,4 +1,4 @@
-import { BarChart, PieChart } from "@mui/x-charts";
+import { BarChart, LineChart, PieChart } from "@mui/x-charts";
 import example from "../movimientos/total082024.json";
 import example2 from "../movimientos/subeDigital.json";
 import {
@@ -40,6 +40,20 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
   const [mesProvisorioTotales, setMesProvisorioTotales] = useState([]);
   const [infoTotales, setInfoTotales] = useState([]);
   const [allMesData, setAllMesData] = useState({
+    monthNames: [
+      ["Ene", "Enero", 31],
+      ["Feb", "Febrero", 29],
+      ["Mar", "Marzo", 31],
+      ["Abr", "Abril", 30],
+      ["May", "Mayo", 31],
+      ["Jun", "Junio", 30],
+      ["Jul", "Julio", 31],
+      ["Ago", "Agosto", 31],
+      ["Set", "Septiembre", 30],
+      ["Oct", "Octubre", 31],
+      ["Nov", "Noviembre", 30],
+      ["Dic", "Diciembre", 31],
+    ],
     nroMovimientos: 0,
     nroServicios: 0,
     nroCargas: 0,
@@ -51,6 +65,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
     maximoViajes: 0,
     objPrecios: {},
     objTipos: {},
+    arrViajesXDia: false,
   });
 
   const [elementIsVisible, setElementIsVisible] = useState(false);
@@ -60,20 +75,6 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
     const countByMonth = () => {
       const data = mainFile.Data.Items;
       const result = {};
-      const monthNames = [
-        ["Ene", "Enero"],
-        ["Feb", "Febrero"],
-        ["Mar", "Marzo"],
-        ["Abr", "Abril"],
-        ["May", "Mayo"],
-        ["Jun", "Junio"],
-        ["Jul", "Julio"],
-        ["Ago", "Agosto"],
-        ["Set", "Septiembre"],
-        ["Oct", "Octubre"],
-        ["Nov", "Noviembre"],
-        ["Dic", "Diciembre"],
-      ];
 
       data.forEach((item) => {
         if (
@@ -90,7 +91,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
             result[month].cantidad++;
             result[month].saldoConsumido += balance;
           } else {
-            const monthWithYear = monthNames[month];
+            const monthWithYear = allMesData.monthNames[month];
             monthWithYear.push(anio);
             result[month] = {
               mes: month + 1,
@@ -225,7 +226,44 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
         cantidadTiposArray.push(item.total);
       });
 
+    const arrViajesXDia = (function () {
+      if (mes !== "all") {
+        const counts = new Array(allMesData.monthNames[mes - 1][2]).fill(0);
+        const arrDias = Array.from({ length: counts.length }, (_, i) => i + 1);
+        // Contar la cantidad de elementos por día
+        mesProvisorioTotales.forEach((item) => {
+          if (
+            item.Type !== "Carga virtual" &&
+            item.Type !== "Carga Tarjeta Digital"
+          ) {
+            const day = new Date(item.Date).getDate();
+            counts[day - 1]++;
+          }
+        });
+        console.log({ arrDias });
+        return { arrDias, counts };
+      } else {
+        return false;
+      }
+    })();
+
+    console.log({ arrViajesXDia });
+
     setAllMesData({
+      monthNames: [
+        ["Ene", "Enero", 31],
+        ["Feb", "Febrero", 29],
+        ["Mar", "Marzo", 31],
+        ["Abr", "Abril", 30],
+        ["May", "Mayo", 31],
+        ["Jun", "Junio", 30],
+        ["Jul", "Julio", 31],
+        ["Ago", "Agosto", 31],
+        ["Set", "Septiembre", 30],
+        ["Oct", "Octubre", 31],
+        ["Nov", "Noviembre", 30],
+        ["Dic", "Diciembre", 31],
+      ],
       nroMovimientos,
       nroCargas,
       nroServicios,
@@ -237,6 +275,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
       maximoViajes,
       objPrecios: { preciosArray, cantidadPreciosArray },
       objTipos: { tiposArray, cantidadTiposArray },
+      arrViajesXDia,
     });
   }, [mesProvisorioTotales]);
 
@@ -282,7 +321,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
           <MenuItem value={"all"}>Todos los datos</MenuItem>
           {infoTotales.map((dataMes) => (
             <MenuItem key={dataMes.mes} value={dataMes.mes}>
-              {dataMes.nombre[1]} - {dataMes.nombre[2]}
+              {dataMes.nombre[1]} - {dataMes.nombre[3]}
             </MenuItem>
           ))}
         </Select>
@@ -313,7 +352,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
             {
               scaleType: "band",
               dataKey: "nombre",
-              valueFormatter: (item) => `${item[0]} ${item[2]}`,
+              valueFormatter: (item) => `${item[0]} ${item[3]}`,
             },
           ]}
         />
@@ -335,7 +374,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
             {
               scaleType: "band",
               dataKey: "nombre",
-              valueFormatter: (item) => `${item[0]} ${item[2]}`,
+              valueFormatter: (item) => `${item[0]} ${item[3]}`,
             },
           ]}
         />
@@ -444,6 +483,22 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
             layout="horizontal"
           />
         </div>
+      )}
+
+      {allMesData.arrViajesXDia && (
+        <>
+          <h2>Viajes x día</h2>
+          <LineChart
+            xAxis={[{ data: allMesData.arrViajesXDia.arrDias }]}
+            series={[
+              {
+                data: allMesData.arrViajesXDia.counts,
+              },
+            ]}
+            width={500}
+            height={300}
+          />
+        </>
       )}
     </>
   );
