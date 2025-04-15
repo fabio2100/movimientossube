@@ -76,32 +76,37 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
       const data = mainFile.Data.Items;
       const result = {};
 
-      data.forEach((item) => {
+            data.forEach((item) => {
         if (
-          item.Type !== "Carga virtual" &&
-          item.Type !== "Carga Tarjeta Digital"
+            item.Type !== "Carga virtual" &&
+            item.Type !== "Carga Tarjeta Digital"
         ) {
-          const date = new Date(item.Date); // Obtener el mes (0-11) y ajustar a (1-12)
-          const month = date.getMonth();
-          const anio = date.getFullYear().toString().slice(-2);
-          const balance = Math.abs(
-            Number(item.BalanceFormat.slice(2).replace(",", "."))
-          );
-          if (result[month]) {
-            result[month].cantidad++;
-            result[month].saldoConsumido += balance;
-          } else {
-            const monthWithYear = allMesData.monthNames[month];
-            monthWithYear.push(anio);
-            result[month] = {
-              mes: month + 1,
-              cantidad: 1,
-              nombre: monthWithYear,
-              saldoConsumido: balance,
-            };
-          }
+            const date = new Date(item.Date);
+            const month = date.getMonth();
+            const year = date.getFullYear(); // Obtener el año completo
+            const anio = date.getFullYear().toString().slice(-2);
+            const balance = Math.abs(
+                Number(item.BalanceFormat.slice(2).replace(",", "."))
+            );
+            // Usar una clave única que combine mes y año
+            const key = `${month+1}-${year}`;
+
+            if (result[key]) {
+                result[key].cantidad++;
+                result[key].saldoConsumido += balance;
+            } else {
+                const monthWithYear = allMesData.monthNames[month];
+                monthWithYear.push(anio);
+                result[key] = {
+                    key: `${month+1}-${year}`,
+                    mes: month + 1,
+                    cantidad: 1,
+                    nombre: monthWithYear, // Incluir el año
+                    saldoConsumido: balance,
+                };
+            }
         }
-      });
+    });
 
       return Object.values(result);
     };
@@ -130,6 +135,8 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
   };
 
   useEffect(() => {
+    console.log({mes})
+    //aca hay que modificar, mes filtra por mes y no por key
     setMesProvisorioTotales(
       mainFile.Data.Items.filter((item) => {
         const fecha = new Date(item.Date);
@@ -317,7 +324,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
         >
           <MenuItem value={"all"}>Todos los datos</MenuItem>
           {infoTotales.map((dataMes) => (
-            <MenuItem key={dataMes.mes} value={dataMes.mes}>
+            <MenuItem key={dataMes.key} value={dataMes.mes}>
               {dataMes.nombre[1]} - {dataMes.nombre[3]}
             </MenuItem>
           ))}
