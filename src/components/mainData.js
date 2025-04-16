@@ -1,4 +1,4 @@
-import { BarChart, LineChart, PieChart } from "@mui/x-charts";
+import { BarChart, ContinuousColorLegend, LineChart, PieChart } from "@mui/x-charts";
 import example from "../movimientos/total082024.json";
 import example2 from "../movimientos/subeDigital.json";
 import {
@@ -90,7 +90,6 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
             );
             // Usar una clave única que combine mes y año
             const key = `${month+1}-${year}`;
-
             if (result[key]) {
                 result[key].cantidad++;
                 result[key].saldoConsumido += balance;
@@ -135,12 +134,13 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
   };
 
   useEffect(() => {
-    console.log({mes})
     //aca hay que modificar, mes filtra por mes y no por key
     setMesProvisorioTotales(
       mainFile.Data.Items.filter((item) => {
         const fecha = new Date(item.Date);
-        return fecha.getMonth() + 1 === mes || mes === "all";
+        const month = fecha.getMonth();
+        const year = fecha.getFullYear(); // Obtener el año completo
+        return `${month+1}-${year}` === mes || mes === "all";
       })
     );
   }, [mes]);
@@ -235,6 +235,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
 
     const arrViajesXDia = (function () {
       if (mes !== "all") {
+        return false;
         const counts = new Array(allMesData.monthNames[mes - 1][2]).fill(0);
         const arrDias = Array.from({ length: counts.length }, (_, i) => i + 1);
         // Contar la cantidad de elementos por día
@@ -323,9 +324,10 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
           onChange={handleChange}
         >
           <MenuItem value={"all"}>Todos los datos</MenuItem>
-          {infoTotales.map((dataMes) => (
-            <MenuItem key={dataMes.key} value={dataMes.mes}>
-              {dataMes.nombre[1]} - {dataMes.nombre[3]}
+          {infoTotales.map((dataMes) => 
+          (
+            <MenuItem key={dataMes.key} value={dataMes.key}>
+              {dataMes.key}
             </MenuItem>
           ))}
         </Select>
