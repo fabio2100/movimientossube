@@ -134,6 +134,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
   };
 
   useEffect(() => {
+    console.log({infoTotales})
     //aca hay que modificar, mes filtra por mes y no por key
     setMesProvisorioTotales(
       mainFile.Data.Items.filter((item) => {
@@ -357,8 +358,8 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
           xAxis={[
             {
               scaleType: "band",
-              dataKey: "nombre",
-              valueFormatter: (item) => `${item[0]} ${item[3]}`,
+              dataKey: "key",
+              //valueFormatter: (item) => `${item[0]} ${item[3]}`,
             },
           ]}
         />
@@ -379,8 +380,8 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
           xAxis={[
             {
               scaleType: "band",
-              dataKey: "nombre",
-              valueFormatter: (item) => `${item[0]} ${item[3]}`,
+              dataKey: "key",
+              //valueFormatter: (item) => `${item[0]} ${item[3]}`,
             },
           ]}
         />
