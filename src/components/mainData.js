@@ -1,6 +1,9 @@
-import { BarChart, ContinuousColorLegend, LineChart, PieChart } from "@mui/x-charts";
+import {
+  BarChart,
+  LineChart,
+  PieChart,
+} from "@mui/x-charts";
 import example from "../movimientos/total082024.json";
-import example2 from "../movimientos/subeDigital.json";
 import {
   Button,
   FormControl,
@@ -66,6 +69,15 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
     objPrecios: {},
     objTipos: {},
     arrViajesXDia: false,
+    porDiaDeSemana: [
+      { day: "Lunes", count: 0 },
+      { day: "Martes", count: 0 },
+      { day: "Miércoles", count: 0 },
+      { day: "Jueves", count: 0 },
+      { day: "Viernes", count: 0 },
+      { day: "Sábado", count: 0 },
+      { day: "Domingo", count: 0 },
+    ],
   });
 
   const [elementIsVisible, setElementIsVisible] = useState(false);
@@ -76,36 +88,36 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
       const data = mainFile.Data.Items;
       const result = {};
 
-            data.forEach((item) => {
+      data.forEach((item) => {
         if (
-            item.Type !== "Carga virtual" &&
-            item.Type !== "Carga Tarjeta Digital"
+          item.Type !== "Carga virtual" &&
+          item.Type !== "Carga Tarjeta Digital"
         ) {
-            const date = new Date(item.Date);
-            const month = date.getMonth();
-            const year = date.getFullYear(); // Obtener el año completo
-            const anio = date.getFullYear().toString().slice(-2);
-            const balance = Math.abs(
-                Number(item.BalanceFormat.slice(2).replace(",", "."))
-            );
-            // Usar una clave única que combine mes y año
-            const key = `${month+1}-${year}`;
-            if (result[key]) {
-                result[key].cantidad++;
-                result[key].saldoConsumido += balance;
-            } else {
-                const monthWithYear = allMesData.monthNames[month];
-                monthWithYear.push(anio);
-                result[key] = {
-                    key: `${month+1}-${year}`,
-                    mes: month + 1,
-                    cantidad: 1,
-                    nombre: monthWithYear, // Incluir el año
-                    saldoConsumido: balance,
-                };
-            }
+          const date = new Date(item.Date);
+          const month = date.getMonth();
+          const year = date.getFullYear(); // Obtener el año completo
+          const anio = date.getFullYear().toString().slice(-2);
+          const balance = Math.abs(
+            Number(item.BalanceFormat.slice(2).replace(",", "."))
+          );
+          // Usar una clave única que combine mes y año
+          const key = `${month + 1}-${year}`;
+          if (result[key]) {
+            result[key].cantidad++;
+            result[key].saldoConsumido += balance;
+          } else {
+            const monthWithYear = allMesData.monthNames[month];
+            monthWithYear.push(anio);
+            result[key] = {
+              key: `${month + 1}-${year}`,
+              mes: month + 1,
+              cantidad: 1,
+              nombre: monthWithYear, // Incluir el año
+              saldoConsumido: balance,
+            };
+          }
         }
-    });
+      });
 
       return Object.values(result);
     };
@@ -134,14 +146,12 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
   };
 
   useEffect(() => {
-    console.log({infoTotales})
-    //aca hay que modificar, mes filtra por mes y no por key
     setMesProvisorioTotales(
       mainFile.Data.Items.filter((item) => {
         const fecha = new Date(item.Date);
         const month = fecha.getMonth();
         const year = fecha.getFullYear(); // Obtener el año completo
-        return `${month+1}-${year}` === mes || mes === "all";
+        return `${month + 1}-${year}` === mes || mes === "all";
       })
     );
   }, [mes]);
@@ -255,6 +265,51 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
       }
     })();
 
+    //Viajes x día de semana
+    // Función para obtener el nombre del día en español
+    const getDayNameInSpanish = (dateString) => {
+      const days = [
+        "Domingo",
+        "Lunes",
+        "Martes",
+        "Miércoles",
+        "Jueves",
+        "Viernes",
+        "Sábado",
+      ];
+      const date = new Date(dateString);
+      return days[date.getDay()];
+    };
+
+    // Todos los días de la semana en español
+    const allDays = [
+      "Lunes",
+      "Martes",
+      "Miércoles",
+      "Jueves",
+      "Viernes",
+      "Sábado",
+      "Domingo",
+    ];
+
+    // Transformación de datos: agrupar por día de la semana
+    const groupedData = mesProvisorioTotales.reduce((acc, transaction) => {
+      if (
+        transaction.Type !== "Carga virtual" &&
+        transaction.Type !== "Carga Tarjeta Digital"
+      ) {
+        const dayName = getDayNameInSpanish(transaction.Date);
+        acc[dayName] = (acc[dayName] || 0) + 1;
+      }
+      return acc;
+    }, {});
+
+    // Completar los días faltantes con valor 0
+    const porDiaDeSemana = allDays.map((day) => ({
+      day,
+      count: groupedData[day] || 0,
+    }));
+
     setAllMesData({
       monthNames: [
         ["Ene", "Enero", 31],
@@ -282,6 +337,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
       objPrecios: { preciosArray, cantidadPreciosArray },
       objTipos: { tiposArray, cantidadTiposArray },
       arrViajesXDia,
+      porDiaDeSemana,
     });
   }, [mesProvisorioTotales]);
 
@@ -325,8 +381,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
           onChange={handleChange}
         >
           <MenuItem value={"all"}>Todos los datos</MenuItem>
-          {infoTotales.map((dataMes) => 
-          (
+          {infoTotales.map((dataMes) => (
             <MenuItem key={dataMes.key} value={dataMes.key}>
               {dataMes.key}
             </MenuItem>
@@ -461,6 +516,22 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
           />
         </div>
       )}
+
+      <h2>Por día de semana</h2>
+      <div className="graph">
+        <BarChart
+          width={500}
+          height={300}
+          dataset={allMesData.porDiaDeSemana}
+          series={[{ dataKey: "count"}]}
+          xAxis={[
+            {
+              scaleType: "band",
+              dataKey: "day",
+            },
+          ]}
+        />
+      </div>
 
       <h2>Por tipo de servicio</h2>
       {Object.keys(allMesData.objTipos).length !== 0 && (

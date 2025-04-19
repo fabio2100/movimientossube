@@ -8,6 +8,72 @@
       "PageCount": 0,
       "Items": [
         {
+          "Date": "2025-04-17T13:19:03",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 733",
+          "Place": "Interno 101",
+          "BalanceFormat": "$ -850,00",
+          "ValueFormat": "$ 3180,71",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+      },
+      {
+          "Date": "2025-04-17T11:40:03",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 729",
+          "Place": "Interno 25",
+          "BalanceFormat": "$ -850,00",
+          "ValueFormat": "$ 4030,71",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+      },
+      {
+          "Date": "2025-04-16T11:31:56",
+          "Id": "0",
+          "Type": "Uso con RED SUBE 1",
+          "Entity": "LINEA 937",
+          "Place": "Interno 122",
+          "BalanceFormat": "$ 0,00",
+          "ValueFormat": "$ -119,29",
+          "IsNegative": false,
+          "IsNegativeBalance": true
+      },
+      {
+          "Date": "2025-04-16T11:25:42",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 761",
+          "Place": "Interno 141",
+          "BalanceFormat": "$ -850,00",
+          "ValueFormat": "$ -119,29",
+          "IsNegative": true,
+          "IsNegativeBalance": true
+      },
+      {
+          "Date": "2025-04-15T13:30:52",
+          "Id": "0",
+          "Type": "Uso con RED SUBE 1",
+          "Entity": "LINEA 761",
+          "Place": "Interno 224",
+          "BalanceFormat": "$ 0,00",
+          "ValueFormat": "$ 730,71",
+          "IsNegative": false,
+          "IsNegativeBalance": false
+      },
+      {
+          "Date": "2025-04-15T13:18:26",
+          "Id": "0",
+          "Type": "Uso",
+          "Entity": "LINEA 110",
+          "Place": "Interno 83",
+          "BalanceFormat": "$ -850,00",
+          "ValueFormat": "$ 730,71",
+          "IsNegative": true,
+          "IsNegativeBalance": false
+      },
+      {
           "Date": "2025-04-15T11:46:36",
           "Id": "0",
           "Type": "Uso con RED SUBE 1",
