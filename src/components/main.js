@@ -2,6 +2,7 @@ import { useState } from "react";
 import MainData from "./mainData";
 import { Button } from "@mui/material";
 import JsonFileUpload from "./JsonFileUpload";
+import PdfReader from "./PdfReader";
 
 export default function Main() {
   const [isValid, setIsValid] = useState(false);
@@ -24,6 +25,7 @@ export default function Main() {
         >
           Ver ejemplo
         </Button>
+        <PdfReader />
       </div>
     );
   };
