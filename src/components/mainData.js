@@ -68,6 +68,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
     maximoViajes: 0,
     objPrecios: {},
     objTipos: {},
+    objTiposProcesados: {},
     arrViajesXDia: false,
     porDiaDeSemana: [
       { day: "Lunes", count: 0 },
@@ -228,21 +229,108 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
     const tiposArray = [];
     const cantidadTiposArray = [];
 
-    mesProvisorioTotales
-      .reduce((acc, item) => {
-        const found = acc.find((el) => el.Type === item.Type);
-        if (found) {
-          found.total++;
-        } else {
-          acc.push({ Type: item.Type, total: 1 });
-        }
+    const tiposDataOriginal = mesProvisorioTotales.reduce((acc, item) => {
+      const found = acc.find((el) => el.Type === item.Type);
+      if (found) {
+        found.total++;
+      } else {
+        acc.push({ Type: item.Type, total: 1 });
+      }
+      return acc;
+    }, []);
 
-        return acc;
-      }, [])
-      .forEach((item) => {
-        tiposArray.push(item.Type);
-        cantidadTiposArray.push(item.total);
-      });
+    // Ordenar según el orden solicitado: Uso, Uso con RED SUBE 1, Uso con RED SUBE 2, después todo lo demás
+    const ordenPrioridad = ["Uso", "Uso con RED SUBE 1", "Uso con RED SUBE 2"];
+    const tiposOrdenados = [];
+
+    // Agregar primero los tipos prioritarios en orden
+    ordenPrioridad.forEach(tipo => {
+      const tipoEncontrado = tiposDataOriginal.find(item => item.Type === tipo);
+      if (tipoEncontrado) {
+        tiposOrdenados.push(tipoEncontrado);
+      }
+    });
+
+    // Agregar el resto de tipos
+    tiposDataOriginal.forEach(item => {
+      if (!ordenPrioridad.includes(item.Type)) {
+        tiposOrdenados.push(item);
+      }
+    });
+
+    tiposOrdenados.forEach((item) => {
+      tiposArray.push(item.Type);
+      cantidadTiposArray.push(item.total);
+    });
+
+    // Procesamiento de tipos con lógica de resta
+    const tiposData = mesProvisorioTotales.reduce((acc, item) => {
+      const found = acc.find((el) => el.Type === item.Type);
+      if (found) {
+        found.total++;
+      } else {
+        acc.push({ Type: item.Type, total: 1 });
+      }
+      return acc;
+    }, []);
+
+    // Crear una copia para poder modificar los valores
+    const tiposDataProcesado = tiposData.map(item => ({ ...item }));
+
+    // Obtener los valores originales
+    const usoRedSube2Item = tiposDataProcesado.find(el => el.Type === "Uso con RED SUBE 2");
+    const usoRedSube1Item = tiposDataProcesado.find(el => el.Type === "Uso con RED SUBE 1");
+    const usoItem = tiposDataProcesado.find(el => el.Type === "Uso");
+
+    const usoRedSube2Count = usoRedSube2Item ? usoRedSube2Item.total : 0;
+
+    // Aplicar la lógica de resta
+    if (usoRedSube1Item && usoRedSube2Count > 0) {
+      // "Uso con RED SUBE 1" = "Uso con RED SUBE 1" - "Uso con RED SUBE 2"
+      usoRedSube1Item.total = Math.max(0, usoRedSube1Item.total - usoRedSube2Count);
+    }
+
+    if (usoItem) {
+      // "Uso" = "Uso" - "Uso con RED SUBE 2" - "Uso con RED SUBE 1(valor nuevo)"
+      const nuevoUsoRedSube1Count = usoRedSube1Item ? usoRedSube1Item.total : 0;
+      usoItem.total = Math.max(0, usoItem.total - usoRedSube2Count - nuevoUsoRedSube1Count);
+    }
+
+    // Crear arrays finales con orden y leyendas personalizadas para el gráfico procesado
+    const tiposArrayProcesado = [];
+    const cantidadTiposArrayProcesado = [];
+
+    // Ordenar los tipos procesados según el mismo orden y aplicar leyendas personalizadas
+    const tiposProcesadosOrdenados = [];
+
+    // Agregar primero los tipos prioritarios en orden con leyendas personalizadas
+    ordenPrioridad.forEach(tipo => {
+      const tipoEncontrado = tiposDataProcesado.find(item => item.Type === tipo && item.total > 0);
+      if (tipoEncontrado) {
+        const tipoConLeyenda = { ...tipoEncontrado };
+        // Cambiar las leyendas según lo solicitado
+        if (tipoEncontrado.Type === "Uso") {
+          tipoConLeyenda.Type = "Viaje normal";
+        } else if (tipoEncontrado.Type === "Uso con RED SUBE 1") {
+          tipoConLeyenda.Type = "Viajes con trasbordo";
+        } else if (tipoEncontrado.Type === "Uso con RED SUBE 2") {
+          tipoConLeyenda.Type = "Viajes con 2 trasbordos";
+        }
+        tiposProcesadosOrdenados.push(tipoConLeyenda);
+      }
+    });
+
+    // Agregar el resto de tipos que tengan total > 0
+    tiposDataProcesado.forEach(item => {
+      if (!ordenPrioridad.includes(item.Type) && item.total > 0) {
+        tiposProcesadosOrdenados.push(item);
+      }
+    });
+
+    tiposProcesadosOrdenados.forEach((item) => {
+      tiposArrayProcesado.push(item.Type);
+      cantidadTiposArrayProcesado.push(item.total);
+    });
 
     const arrViajesXDia = (function () {
       if (mes !== "all") {
@@ -336,6 +424,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
       maximoViajes,
       objPrecios: { preciosArray, cantidadPreciosArray },
       objTipos: { tiposArray, cantidadTiposArray },
+      objTiposProcesados: { tiposArrayProcesado, cantidadTiposArrayProcesado },
       arrViajesXDia,
       porDiaDeSemana,
     });
@@ -541,6 +630,21 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
               { scaleType: "band", data: allMesData.objTipos.tiposArray },
             ]}
             series={[{ data: allMesData.objTipos.cantidadTiposArray }]}
+            width={500}
+            height={300}
+            layout="horizontal"
+          />
+        </div>
+      )}
+
+      <h2>Por tipo de servicio (procesado)</h2>
+      {Object.keys(allMesData.objTiposProcesados).length !== 0 && (
+        <div className="graph">
+          <BarChart
+            yAxis={[
+              { scaleType: "band", data: allMesData.objTiposProcesados.tiposArrayProcesado },
+            ]}
+            series={[{ data: allMesData.objTiposProcesados.cantidadTiposArrayProcesado }]}
             width={500}
             height={300}
             layout="horizontal"
