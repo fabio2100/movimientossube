@@ -356,7 +356,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
     // Preparar datos para gráfico de barras apiladas
     const datosParaGrafico = [];
     
-    // Agregar la barra combinada de "Uso" si hay datos
+    // Agregar solo la barra combinada de "Uso" si hay datos
     if (tiposUso.length > 0) {
       const barraUso = { categoria: "Tipos de Uso" };
       tiposUso.forEach(tipo => {
@@ -365,31 +365,20 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
       datosParaGrafico.push(barraUso);
     }
 
-    // Agregar barras individuales para otros tipos
-    otrosTipos.forEach(tipo => {
-      datosParaGrafico.push({
-        categoria: tipo.Type,
-        [tipo.Type]: tipo.total
-      });
-    });
-
     // Crear series para el gráfico apilado
     const seriesGraficoProcesado = [];
     
-    // Series para los tipos de uso
+    // Calcular el total de tipos de uso para porcentajes
+    const totalTiposUso = tiposUso.reduce((sum, tipo) => sum + tipo.total, 0);
+    
+    // Series solo para los tipos de uso con tooltip personalizado
     tiposUso.forEach(tipo => {
+      const porcentaje = totalTiposUso > 0 ? ((tipo.total / totalTiposUso) * 100).toFixed(1) : 0;
       seriesGraficoProcesado.push({
         dataKey: tipo.Type,
         label: tipo.Type,
-        stack: "uso"
-      });
-    });
-
-    // Series para otros tipos
-    otrosTipos.forEach(tipo => {
-      seriesGraficoProcesado.push({
-        dataKey: tipo.Type,
-        label: tipo.Type
+        stack: "uso",
+        valueFormatter: (value) => `${value} (${Math.round(porcentaje)}%)`
       });
     });
 
@@ -760,3 +749,4 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
     </>
   );
 }
+                
