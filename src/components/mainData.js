@@ -322,6 +322,10 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
     const tiposArrayProcesado = [];
     const cantidadTiposArrayProcesado = [];
 
+    // Separar los tipos de "Uso" de los demás tipos
+    const tiposUso = [];
+    const otrosTipos = [];
+
     // Ordenar los tipos procesados según el mismo orden y aplicar leyendas personalizadas
     const tiposProcesadosOrdenados = [];
 
@@ -338,20 +342,55 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
         } else if (tipoEncontrado.Type === "Uso con RED SUBE 2") {
           tipoConLeyenda.Type = "Viajes con 2 trasbordos";
         }
-        tiposProcesadosOrdenados.push(tipoConLeyenda);
+        tiposUso.push(tipoConLeyenda);
       }
     });
 
     // Agregar el resto de tipos que tengan total > 0
     tiposDataProcesado.forEach(item => {
       if (!ordenPrioridad.includes(item.Type) && item.total > 0) {
-        tiposProcesadosOrdenados.push(item);
+        otrosTipos.push(item);
       }
     });
 
-    tiposProcesadosOrdenados.forEach((item) => {
-      tiposArrayProcesado.push(item.Type);
-      cantidadTiposArrayProcesado.push(item.total);
+    // Preparar datos para gráfico de barras apiladas
+    const datosParaGrafico = [];
+    
+    // Agregar la barra combinada de "Uso" si hay datos
+    if (tiposUso.length > 0) {
+      const barraUso = { categoria: "Tipos de Uso" };
+      tiposUso.forEach(tipo => {
+        barraUso[tipo.Type] = tipo.total;
+      });
+      datosParaGrafico.push(barraUso);
+    }
+
+    // Agregar barras individuales para otros tipos
+    otrosTipos.forEach(tipo => {
+      datosParaGrafico.push({
+        categoria: tipo.Type,
+        [tipo.Type]: tipo.total
+      });
+    });
+
+    // Crear series para el gráfico apilado
+    const seriesGraficoProcesado = [];
+    
+    // Series para los tipos de uso
+    tiposUso.forEach(tipo => {
+      seriesGraficoProcesado.push({
+        dataKey: tipo.Type,
+        label: tipo.Type,
+        stack: "uso"
+      });
+    });
+
+    // Series para otros tipos
+    otrosTipos.forEach(tipo => {
+      seriesGraficoProcesado.push({
+        dataKey: tipo.Type,
+        label: tipo.Type
+      });
     });
 
     const arrViajesXDia = (function () {
@@ -458,7 +497,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
       maximoViajes,
       objPrecios: { preciosArray, cantidadPreciosArray },
       objTipos: { tiposArray, cantidadTiposArray },
-      objTiposProcesados: { tiposArrayProcesado, cantidadTiposArrayProcesado },
+      objTiposProcesados: { datosParaGrafico, seriesGraficoProcesado },
       arrViajesXDia,
       porDiaDeSemana,
     });
@@ -673,11 +712,15 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
       {Object.keys(allMesData.objTiposProcesados).length !== 0 && (
         <div className="graph">
           <BarChart
+            dataset={allMesData.objTiposProcesados.datosParaGrafico}
+            series={allMesData.objTiposProcesados.seriesGraficoProcesado}
             yAxis={[
-              { scaleType: "band", data: allMesData.objTiposProcesados.tiposArrayProcesado },
+              {
+                scaleType: "band",
+                dataKey: "categoria",
+              },
             ]}
-            series={[{ data: allMesData.objTiposProcesados.cantidadTiposArrayProcesado }]}
-            width={500}
+            width={700}
             height={300}
             layout="horizontal"
           />
