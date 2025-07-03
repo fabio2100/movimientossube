@@ -108,19 +108,28 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
             result[key].saldoConsumido += balance;
           } else {
             const monthWithYear = allMesData.monthNames[month];
-            monthWithYear.push(anio);
+            const displayName = `${monthWithYear[0]} ${anio}`;
             result[key] = {
               key: `${month + 1}-${year}`,
               mes: month + 1,
               cantidad: 1,
-              nombre: monthWithYear, // Incluir el año
+              nombre: displayName, // Formato: "Jun 25"
               saldoConsumido: balance,
             };
           }
         }
       });
 
-      return Object.values(result);
+      // Ordenar por año y mes de más antiguo a más reciente
+      return Object.values(result).sort((a, b) => {
+        const [mesA, yearA] = a.key.split('-').map(Number);
+        const [mesB, yearB] = b.key.split('-').map(Number);
+        
+        if (yearA !== yearB) {
+          return yearA - yearB;
+        }
+        return mesA - mesB;
+      });
     };
     setInfoTotales(countByMonth());
   }, []);
@@ -472,7 +481,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
           <MenuItem value={"all"}>Todos los datos</MenuItem>
           {infoTotales.map((dataMes) => (
             <MenuItem key={dataMes.key} value={dataMes.key}>
-              {dataMes.key}
+              {dataMes.nombre}
             </MenuItem>
           ))}
         </Select>
@@ -502,8 +511,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
           xAxis={[
             {
               scaleType: "band",
-              dataKey: "key",
-              //valueFormatter: (item) => `${item[0]} ${item[3]}`,
+              dataKey: "nombre",
             },
           ]}
         />
@@ -524,8 +532,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
           xAxis={[
             {
               scaleType: "band",
-              dataKey: "key",
-              //valueFormatter: (item) => `${item[0]} ${item[3]}`,
+              dataKey: "nombre",
             },
           ]}
         />
