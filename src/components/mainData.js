@@ -210,7 +210,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
     const preciosArray = [];
     const cantidadPreciosArray = [];
 
-    mesProvisorioTotales
+    const preciosData = mesProvisorioTotales
       .reduce((acc, item) => {
         if (
           item.Type !== "Carga virtual" &&
@@ -225,10 +225,23 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
         }
         return acc;
       }, [])
-      .forEach((item) => {
-        preciosArray.push(item.precio);
-        cantidadPreciosArray.push(item.total);
-      });
+      .map((item) => {
+        // Convertir el precio a valor absoluto para ordenar
+        const precioNumerico = Math.abs(Number(item.precio.slice(2).replace(",", ".")));
+        // Formatear como precio positivo
+        const precioFormateado = `$${precioNumerico.toFixed(2).replace(".", ",")}`;
+        return {
+          ...item,
+          precio: precioFormateado,
+          valorNumerico: precioNumerico
+        };
+      })
+      .sort((a, b) => a.valorNumerico - b.valorNumerico); // Ordenar de menor a mayor
+
+    preciosData.forEach((item) => {
+      preciosArray.push(item.precio);
+      cantidadPreciosArray.push(item.total);
+    });
 
     const arrServiciosXMesOrdenados = arrServiciosXMes.sort(
       (a, b) => b.value - a.value
