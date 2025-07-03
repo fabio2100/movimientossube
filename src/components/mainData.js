@@ -356,9 +356,21 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
 
     const arrViajesXDia = (function () {
       if (mes !== "all") {
-        return false;
-        const counts = new Array(allMesData.monthNames[mes - 1][2]).fill(0);
+        // Extraer el mes del formato "mes-año"
+        const mesNumero = parseInt(mes.split('-')[0]);
+        const yearNumero = parseInt(mes.split('-')[1]);
+        
+        // Determinar los días del mes considerando años bisiestos
+        let diasEnMes;
+        if (mesNumero === 2 && ((yearNumero % 4 === 0 && yearNumero % 100 !== 0) || (yearNumero % 400 === 0))) {
+          diasEnMes = 29; // Febrero bisiesto
+        } else {
+          diasEnMes = allMesData.monthNames[mesNumero - 1][2];
+        }
+        
+        const counts = new Array(diasEnMes).fill(0);
         const arrDias = Array.from({ length: counts.length }, (_, i) => i + 1);
+        
         // Contar la cantidad de elementos por día
         mesProvisorioTotales.forEach((item) => {
           if (
