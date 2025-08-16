@@ -93,11 +93,42 @@ function PdfReader() {
 
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
-        console.log(page)
         const content = await page.getTextContent();
-        console.log(content);
-        const pageText = content.items.map(item => item.str).join(' ');
-        console.log(pageText);
+        console.log('Contenido de página:', content);
+
+        // Ordenar los elementos por posición Y y luego X
+        const items = content.items.sort((a, b) => {
+          if (Math.abs(a.transform[5] - b.transform[5]) < 5) {
+            // Si están en la misma línea aproximadamente (diferencia menor a 5 unidades)
+            return a.transform[4] - b.transform[4]; // Ordenar por posición X
+          }
+          return b.transform[5] - a.transform[5]; // Ordenar por posición Y (invertido porque Y crece hacia abajo)
+        });
+
+        let lastY = null;
+        let lineText = '';
+        let pageText = '';
+
+        // Procesar cada elemento de texto
+        items.forEach(item => {
+          const currentY = Math.round(item.transform[5]);
+          
+          // Si es una nueva línea (Y diferente)
+          if (lastY !== null && Math.abs(currentY - lastY) > 5) {
+            pageText += lineText.trim() + '\n';
+            lineText = '';
+          }
+          
+          lineText += item.str + ' ';
+          lastY = currentY;
+        });
+
+        // Agregar la última línea
+        if (lineText.trim()) {
+          pageText += lineText.trim() + '\n';
+        }
+
+        console.log('Texto procesado de la página:', pageText);
         finalText += pageText + '\n';
       }
 
