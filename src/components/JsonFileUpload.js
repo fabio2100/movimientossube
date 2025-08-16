@@ -13,7 +13,7 @@ function JsonFileUpload({setFileContent,fileContent,setIsValid,isValid}) {
       try {
         const json = JSON.parse(content);
         setFileContent(json);
-      } catch (error) {
+    } catch (error) {
         console.error('Error al parsear el JSON:', error);
       }
     };

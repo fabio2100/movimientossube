@@ -37,7 +37,6 @@ import {
 export default function MainData({ setIsValid, file = 0, setFileContent }) {
   //const exampleAlter = isAlterArray(example);
   const exampleAlter = example;
-
   const mainFile = file || exampleAlter;
   const [mes, setMes] = useState("all");
   const [mesProvisorioTotales, setMesProvisorioTotales] = useState([]);
