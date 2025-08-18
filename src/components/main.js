@@ -1,6 +1,6 @@
 import { useState } from "react";
 import MainData from "./mainData";
-import { Button } from "@mui/material";
+import { Button, Box, Grid } from "@mui/material";
 import JsonFileUpload from "./JsonFileUpload";
 import PdfReader from "./PdfReader";
 
@@ -11,13 +11,24 @@ export default function Main() {
   const uploadFile = () => {
     return (
       <div className="mainBotonera">
-        <JsonFileUpload
-          setFileContent={setFileContent}
-          fileContent={fileContent}
-          setIsValid={setIsValid}
-          isValid={isValid}
-        />
+        <Grid container spacing={2} sx={{ marginBottom: 2 }}>
+          <Grid item xs={6}>
+            <JsonFileUpload
+              setFileContent={setFileContent}
+              fileContent={fileContent}
+              setIsValid={setIsValid}
+              isValid={isValid}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <PdfReader 
+              setFileContent={setFileContent}
+              fileContent={fileContent}
+            />
+          </Grid>
+        </Grid>
         <Button
+          fullWidth
           variant="outlined"
           onClick={() => {
             setIsValid(!isValid);
@@ -25,9 +36,8 @@ export default function Main() {
         >
           Ver ejemplo
         </Button>
-        <PdfReader />
       </div>
     );
   };
-  return <>{isValid ? <MainData setIsValid={setIsValid} /> : uploadFile()}</>;
+  return <>{(isValid || fileContent) ? <MainData setIsValid={setIsValid} file={fileContent} setFileContent={setFileContent} /> : uploadFile()}</>;
 }

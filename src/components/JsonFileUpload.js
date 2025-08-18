@@ -1,8 +1,8 @@
 import { Button } from '@mui/material';
-import React, { useState } from 'react';
-import MainData from './mainData';
+import React, { useRef, useState } from 'react';
 
 function JsonFileUpload({setFileContent,fileContent,setIsValid,isValid}) {
+  const fileInputRef = useRef(null);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -23,12 +23,27 @@ function JsonFileUpload({setFileContent,fileContent,setIsValid,isValid}) {
     }
   };
 
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
-    <div>
-      {!fileContent ? 
-      <Button fullWidth variant="outlined" sx={{marginBottom:1}}><input type="file" accept=".json" onChange={handleFileChange} /></Button> :
-      <MainData setIsValid={setIsValid} file={fileContent} setFileContent={setFileContent} /> } 
-    </div>
+    <>
+      <input 
+        type="file" 
+        accept=".json" 
+        onChange={handleFileChange} 
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+      />
+      <Button 
+        fullWidth 
+        variant="outlined" 
+        onClick={handleButtonClick}
+      >
+        Subir JSON
+      </Button>
+    </>
   );
 }
 

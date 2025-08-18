@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min';
-import MainData from './mainData';
+import { Button } from '@mui/material';
 
-function PdfReader() {
+function PdfReader({ setFileContent, fileContent }) {
   const [text, setText] = useState('');
-  const [fileContent, setFileContent] = useState(null);
+  const [localFileContent, setLocalFileContent] = useState(null);
+  const fileInputRef = useRef(null);
 
   const processText = (text) => {
     console.log('Texto recibido para procesar:', text);
@@ -169,17 +170,27 @@ function PdfReader() {
     fileReader.readAsArrayBuffer(file);
   };
 
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
-    <div>
-      {!fileContent ? (
-        <>
-          <input type="file" accept="application/pdf" onChange={handleFile} />
-          <pre>{text}</pre>
-        </>
-      ) : (
-        <MainData setIsValid={() => {}} file={fileContent} setFileContent={setFileContent} />
-      )}
-    </div>
+    <>
+      <input 
+        type="file" 
+        accept="application/pdf" 
+        onChange={handleFile} 
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+      />
+      <Button 
+        fullWidth 
+        variant="outlined" 
+        onClick={handleButtonClick}
+      >
+        Subir PDF
+      </Button>
+    </>
   );
 }
 
