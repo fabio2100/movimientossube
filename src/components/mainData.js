@@ -38,6 +38,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
   //const exampleAlter = isAlterArray(example);
   const exampleAlter = example;
   const mainFile = file || exampleAlter;
+  console.log({mainFile})
   const [mes, setMes] = useState("all");
   const [mesProvisorioTotales, setMesProvisorioTotales] = useState([]);
   const [infoTotales, setInfoTotales] = useState([]);
@@ -266,7 +267,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
 
     // Agregar primero los tipos prioritarios en orden
     ordenPrioridad.forEach(tipo => {
-      const tipoEncontrado = tiposDataOriginal.find(item => item.Type === tipo);
+      const tipoEncontrado = tiposDataOriginal.find(item => item.Type.toLowerCase() === tipo.toLowerCase());
       if (tipoEncontrado) {
         tiposOrdenados.push(tipoEncontrado);
       }
@@ -274,7 +275,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
 
     // Agregar el resto de tipos
     tiposDataOriginal.forEach(item => {
-      if (!ordenPrioridad.includes(item.Type)) {
+      if (!ordenPrioridad.some(tipo => tipo.toLowerCase() === item.Type.toLowerCase())) {
         tiposOrdenados.push(item);
       }
     });
@@ -299,9 +300,9 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
     const tiposDataProcesado = tiposData.map(item => ({ ...item }));
 
     // Obtener los valores originales
-    const usoRedSube2Item = tiposDataProcesado.find(el => el.Type === "Uso con RED SUBE 2");
-    const usoRedSube1Item = tiposDataProcesado.find(el => el.Type === "Uso con RED SUBE 1");
-    const usoItem = tiposDataProcesado.find(el => el.Type === "Uso");
+    const usoRedSube2Item = tiposDataProcesado.find(el => el.Type.toLowerCase() === "uso con red sube 2");
+    const usoRedSube1Item = tiposDataProcesado.find(el => el.Type.toLowerCase() === "uso con red sube 1");
+    const usoItem = tiposDataProcesado.find(el => el.Type.toLowerCase() === "uso");
 
     const usoRedSube2Count = usoRedSube2Item ? usoRedSube2Item.total : 0;
 
@@ -330,15 +331,15 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
 
     // Agregar primero los tipos prioritarios en orden con leyendas personalizadas
     ordenPrioridad.forEach(tipo => {
-      const tipoEncontrado = tiposDataProcesado.find(item => item.Type === tipo && item.total > 0);
+      const tipoEncontrado = tiposDataProcesado.find(item => item.Type.toLowerCase() === tipo.toLowerCase() && item.total > 0);
       if (tipoEncontrado) {
         const tipoConLeyenda = { ...tipoEncontrado };
         // Cambiar las leyendas según lo solicitado
-        if (tipoEncontrado.Type === "Uso") {
+        if (tipoEncontrado.Type.toLowerCase() === "uso") {
           tipoConLeyenda.Type = "Viaje normal";
-        } else if (tipoEncontrado.Type === "Uso con RED SUBE 1") {
+        } else if (tipoEncontrado.Type.toLowerCase() === "uso con red sube 1") {
           tipoConLeyenda.Type = "Viajes con trasbordo";
-        } else if (tipoEncontrado.Type === "Uso con RED SUBE 2") {
+        } else if (tipoEncontrado.Type.toLowerCase() === "uso con red sube 2") {
           tipoConLeyenda.Type = "Viajes con 2 trasbordos";
         }
         tiposUso.push(tipoConLeyenda);
@@ -347,7 +348,7 @@ export default function MainData({ setIsValid, file = 0, setFileContent }) {
 
     // Agregar el resto de tipos que tengan total > 0
     tiposDataProcesado.forEach(item => {
-      if (!ordenPrioridad.includes(item.Type) && item.total > 0) {
+      if (!ordenPrioridad.some(tipo => tipo.toLowerCase() === item.Type.toLowerCase()) && item.total > 0) {
         otrosTipos.push(item);
       }
     });

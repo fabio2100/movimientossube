@@ -18,7 +18,8 @@ function PdfReader() {
     const movementTypeSet = new Set();
 
     // Expresión regular para extraer los datos de cada línea
-    const regexPattern = /\$\s*([-\d,.]+)\s+(?:Interno\s+\d+\s+)?([^U][A-Z][^\d]+?)\s+(Uso(?:\s+con\s+RED\s+SUBE\s+\d+)?|Carga\s+virtual)\s+(\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2})/;
+    // Patrón: fecha hora tipo_transaccion [LINEA entity] $ valor
+    const regexPattern = /^(\d{2}\/\d{2}\/\d{4})\s+(\d{2}:\d{2})\s+(.+?)\s+\$\s*([-\d,.]+)$/;
 
     for (const line of lines) {
       console.log('Procesando línea:', line);
@@ -30,33 +31,58 @@ function PdfReader() {
       const matches = line.match(regexPattern);
       if (matches) {
         console.log('Matches encontrados:', matches);
-        const [_, balance, entity, type, dateStr] = matches;
+        const [_, date, time, transactionPart, value] = matches;
         
         // Convertir fecha al formato requerido
-        const [date, time] = dateStr.split(' ');
         const [day, month, year] = date.split('/');
         const formattedDate = `${year}-${month}-${day}T${time}:00`;
 
-        // Limpiar y normalizar los valores
-        const cleanEntity = entity.trim();
-        const cleanType = type.trim();
+        // Procesar la parte de la transacción para extraer tipo y entidad
+        let type = '';
+        let entity = '';
+        
+        // Buscar si contiene "LINEA" para extraer la entidad
+        const lineaMatch = transactionPart.match(/(.+?)\s+LINEA\s+(\d+)\s+(?:\d+\s*)?/);
+        if (lineaMatch) {
+          type = lineaMatch[1].trim();
+          entity = `LINEA ${lineaMatch[2]}`;
+        } else {
+          // Si no tiene LINEA, todo es el tipo de transacción
+          type = transactionPart.trim();
+          entity = '';
+        }
+
+        // Procesar el valor - extraer exactamente como aparece en el string original
+        const finalValue = `$ ${value}`;
 
         // Agregar tipos únicos a los sets
-        movementTypeSet.add(cleanType);
-        entitySet.add(cleanEntity);
+        movementTypeSet.add(type);
+        if (entity) {
+          entitySet.add(entity);
+        }
 
         // Crear item
         items.push({
           Date: formattedDate,
           Id: "0",
-          Type: cleanType,
-          Entity: cleanEntity,
-          Place: cleanEntity,
-          BalanceFormat: `$ ${balance.trim()}`,
-          ValueFormat: `$ ${balance.trim()}`,
-          IsNegative: balance.startsWith('-'),
+          Type: type,
+          Entity: entity || type,
+          Place: entity || type,
+          BalanceFormat: finalValue,
+          ValueFormat: finalValue,
+          IsNegative: value.includes('-'),
           IsNegativeBalance: false
         });
+        
+        console.log('Item creado:', {
+          Date: formattedDate,
+          Type: type,
+          Entity: entity || type,
+          Value: value,
+          BalanceFormat: finalValue
+        });
+      } else {
+        console.log('No match para línea:', line);
       }
     }
 
